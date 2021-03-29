@@ -1,6 +1,6 @@
-#include "DirtGround.h"
+#include "Background.h"
 
-DirtGround::DirtGround(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation)
+Background::Background(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation)
 {
 	m_position = position;
 	m_scale = scale;
@@ -9,22 +9,22 @@ DirtGround::DirtGround(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 r
 	buildTransform();
 }
 
-DirtGround::~DirtGround()
+Background::~Background()
 {
 
 }
 
-void DirtGround::render(gef::Renderer3D* rend3D)
+void Background::render(gef::Renderer3D* rend3D)
 {
 	rend3D->DrawMesh(*this);
 }
 
-void DirtGround::initDirt()
+void Background::initBackground()
 {
 	currentType = ObjectType::ENVIRONMENT;
 }
 
-void DirtGround::buildTransform()
+void Background::buildTransform()
 {
 	// setup object rotation
 	rotZ.RotationZ(m_rotation.z());

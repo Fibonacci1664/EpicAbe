@@ -4,11 +4,11 @@
 
 #include "../object/game_object.h"
 
-class Environment : public GameObject
+class Ground : public GameObject
 {
 public:
-	Environment(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation);
-	~Environment();
+	Ground(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation);
+	~Ground();
 
 	void update(float dt);
 	void render(gef::Renderer3D* rend3D);

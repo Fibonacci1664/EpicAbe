@@ -1,6 +1,6 @@
-#include "Railing.h"
+#include "Dunes.h"
 
-Railing::Railing(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation)
+Dunes::Dunes(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation)
 {
 	m_position = position;
 	m_scale = scale;
@@ -9,22 +9,22 @@ Railing::Railing(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotatio
 	buildTransform();
 }
 
-Railing::~Railing()
+Dunes::~Dunes()
 {
 
 }
 
-void Railing::render(gef::Renderer3D* rend3D)
+void Dunes::render(gef::Renderer3D* rend3D)
 {
 	rend3D->DrawMesh(*this);
 }
 
-void Railing::initRailing()
+void Dunes::initDunes()
 {
 	currentType = ObjectType::ENVIRONMENT;
 }
 
-void Railing::buildTransform()
+void Dunes::buildTransform()
 {
 	// setup object rotation
 	rotZ.RotationZ(m_rotation.z());

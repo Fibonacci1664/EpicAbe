@@ -22,9 +22,9 @@ namespace gef
 }
 
 class StateMachine;
-class Environment;
-class Railing;
-class DirtGround;
+class Ground;
+class Background;
+class Dunes;
 class Player;
 class Enemy;
 
@@ -63,17 +63,15 @@ private:
 	gef::Matrix44 projection_matrix;
 	gef::Matrix44 view_matrix;
 
-	// ENVIRONMENT STUFF
-	std::vector<Environment*> grounds;
-	Environment* env;
+	// GROUND STUFF
+	//std::vector<Environment*> grounds;
+	Ground* ground;
 
-	// RAILING STUFF
-	std::vector<Railing*> railings;
-	Railing* railing;
+	// BACKGROUND STUFF
+	Background* background;
 
-	// DIRTGROUND STUFF
-	//DirtGround* dirtGrounds[WIDTH][DEPTH];
-	DirtGround* dirtGround;
+	// DUNES STUFF
+	Dunes* dunes;
 
 	// PLAYER STUFF
 	Player* player;

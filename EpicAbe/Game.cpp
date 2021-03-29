@@ -102,6 +102,5 @@ void Game::initStateMachine()
 	stateMachine = new StateMachine(platform_);
 	stateMachine->init(platform_, sprite_renderer_, renderer_3d_, font_, world_);
 	stateMachine->initInputControl(im, controller, scim);
-	stateMachine->initStates();
-	
+	stateMachine->initStates();	
 }

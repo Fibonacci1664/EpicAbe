@@ -1,9 +1,9 @@
 #include "Level_1_State.h"
 #include "StateMachine.h"
 #include "../char/Player.h"
-#include "../env/DirtGround.h"
-#include "../env/Environment.h"
-#include "../env/Railing.h"
+#include "../env/Dunes.h"
+#include "../env/Ground.h"
+#include "../env/Background.h"
 
 #include <graphics/renderer_3d.h>
 #include <graphics/sprite_renderer.h>
@@ -23,11 +23,11 @@ Level_1_State::Level_1_State(StateMachine* sm)
 	quitGame = false;
 
 	initCamera();
-	initPlayer();
-	initGround();
+	SetupLights();	
 	initDunes();
 	initBackdropScenery();
-	SetupLights();
+	initGround();
+	initPlayer();
 }
 
 Level_1_State::~Level_1_State()
@@ -82,19 +82,6 @@ bool Level_1_State::update(float dt)
 	/*enemy->update(frame_time);
 	enemy->followPlayer(player, frame_time);*/
 
-	/*for (int i = 0; i < grounds.size(); ++i)
-	{
-		grounds[i]->update(frame_time);
-	}*/
-
-	// Update railings transform. Could this be done in the Railings Constructor? YES!
-	/*for (int i = 0; i < railings.size(); ++i)
-	{
-		railings[i]->update(frame_time);
-	}*/
-
-	//env->update(frame_time);
-
 	return false;
 }
 
@@ -103,29 +90,9 @@ void Level_1_State::render()
 	stateMachine->getSpriteRenderer()->Begin();
 
 	player->render(stateMachine->get3DRenderer());
-
-	for (int i = 0; i < grounds.size(); ++i)
-	{
-		grounds[i]->render(stateMachine->get3DRenderer());
-	}
-
-	dirtGround->render(stateMachine->get3DRenderer());
-
-	for (int i = 0; i < railings.size(); ++i)
-	{
-		railings[i]->render(stateMachine->get3DRenderer());
-	}
-
-	/*for (int x = 0; x < WIDTH; ++x)
-	{
-		for (int z = 0; z < DEPTH; ++z)
-		{
-			dirtGrounds[x][z]->render(renderer_3d_);
-		}
-	}*/
-
-	env->render(stateMachine->get3DRenderer());
-
+	dunes->render(stateMachine->get3DRenderer());
+	background->render(stateMachine->get3DRenderer());
+	ground->render(stateMachine->get3DRenderer());
 	stateMachine->getSpriteRenderer()->End();
 
 	// start drawing sprites, but don't clear the frame buffer
@@ -166,27 +133,22 @@ void Level_1_State::initGround()
 {
 	loadAsset("env/desert_ground.scn");
 
-	gef::Mesh* floorMesh = GetMeshFromSceneAssets(scene_assets_);
+	gef::Mesh* groundMesh = GetMeshFromSceneAssets(scene_assets_);
 
-	float xSize = floorMesh->aabb().max_vtx().x() - floorMesh->aabb().min_vtx().x();
-	float ySize = floorMesh->aabb().max_vtx().y() - floorMesh->aabb().min_vtx().y();
+	float xSize = groundMesh->aabb().max_vtx().x() - groundMesh->aabb().min_vtx().x();
+	float ySize = groundMesh->aabb().max_vtx().y() - groundMesh->aabb().min_vtx().y();
 
-	for (int i = 0; i < 10; ++i)
+	//env = new Environment(gef::Vector4(-5 + i, 0, 0), gef::Vector4(xSize, ySize * 0.05f, 1.0f), gef::Vector4(0, 3.1415 0));
+	ground = new Ground(gef::Vector4(15, 0, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+	ground->initGround(stateMachine->getPhysicsWorld(), xSize, ySize);
+
+	if (scene_assets_)
 	{
-		//env = new Environment(gef::Vector4(-5 + i, 0, 0), gef::Vector4(xSize, ySize * 0.05f, 1.0f), gef::Vector4(0, 3.1415 0));
-		env = new Environment(gef::Vector4(5 + (i * 11), 0, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
-		env->initGround(stateMachine->getPhysicsWorld(), xSize, ySize);
-
-		if (scene_assets_)
-		{
-			env->set_mesh(floorMesh);
-		}
-		else
-		{
-			gef::DebugOut("Ground model failed to load\n");
-		}
-
-		grounds.push_back(env);
+		ground->set_mesh(groundMesh);
+	}
+	else
+	{
+		gef::DebugOut("Ground model failed to load\n");
 	}
 }
 
@@ -196,19 +158,16 @@ void Level_1_State::initDunes()
 
 	gef::Mesh* dunesMesh = GetMeshFromSceneAssets(scene_assets_);
 
-	float xSize = dunesMesh->aabb().max_vtx().x() - dunesMesh->aabb().min_vtx().x();
-	float zSize = dunesMesh->aabb().max_vtx().z() - dunesMesh->aabb().min_vtx().z();
-
-	dirtGround = new DirtGround(gef::Vector4(5, 0, -2.3f), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
-	dirtGround->initDirt();
+	dunes = new Dunes(gef::Vector4(15, 0, -2.3f), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+	dunes->initDunes();
 
 	if (scene_assets_)
 	{
-		dirtGround->set_mesh(dunesMesh);
+		dunes->set_mesh(dunesMesh);
 	}
 	else
 	{
-		gef::DebugOut("Dirt ground model failed to load\n");
+		gef::DebugOut("Dunes model failed to load\n");
 	}
 }
 
@@ -216,26 +175,18 @@ void Level_1_State::initBackdropScenery()
 {
 	loadAsset("env/desert.scn");
 
-	gef::Mesh* railingMesh = GetMeshFromSceneAssets(scene_assets_);
+	gef::Mesh* backgroundMesh = GetMeshFromSceneAssets(scene_assets_);
 
-	/*float xSize = railingMesh->aabb().max_vtx().x() - railingMesh->aabb().min_vtx().x();
-	float zSize = railingMesh->aabb().max_vtx().z() - railingMesh->aabb().min_vtx().z();*/
+	background = new Background(gef::Vector4(15, 0, -2.0f), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+	background->initBackground();
 
-	for (int i = 0; i < 15; ++i)
+	if (scene_assets_)
 	{
-		railing = new Railing(gef::Vector4(5 + (i * 7), 0, -2.0f), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
-		railing->initRailing();
-
-		if (scene_assets_)
-		{
-			railing->set_mesh(railingMesh);
-		}
-		else
-		{
-			gef::DebugOut("Railing model failed to load\n");
-		}
-
-		railings.push_back(railing);
+		background->set_mesh(backgroundMesh);
+	}
+	else
+	{
+		gef::DebugOut("Background model failed to load\n");
 	}
 }
 

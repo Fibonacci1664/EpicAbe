@@ -3,14 +3,14 @@
 
 #include <graphics/renderer_3d.h>
 
-class DirtGround : public GameObject
+class Dunes : public GameObject
 {
 public:
-	DirtGround(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation);
-	~DirtGround();
+	Dunes(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation);
+	~Dunes();
 
 	void render(gef::Renderer3D* rend3D);
-	void initDirt();
+	void initDunes();
 	void buildTransform();
 
 private:

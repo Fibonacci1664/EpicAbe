@@ -1,6 +1,6 @@
-#include "Environment.h"
+#include "Ground.h"
 
-Environment::Environment(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation)
+Ground::Ground(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation)
 {
 	m_position = position;
 	m_scale = scale;
@@ -9,22 +9,22 @@ Environment::Environment(gef::Vector4 position, gef::Vector4 scale, gef::Vector4
 	//buildTransform();
 }
 
-Environment::~Environment()
+Ground::~Ground()
 {
 
 }
 
-void Environment::update(float dt)
+void Ground::update(float dt)
 {
 	buildTransform();
 }
 
-void Environment::render(gef::Renderer3D* rend3D)
+void Ground::render(gef::Renderer3D* rend3D)
 {
 	rend3D->DrawMesh(*this);
 }
 
-void Environment::initGround(b2World* world, float xMeshSize, float yMeshSize)
+void Ground::initGround(b2World* world, float xMeshSize, float yMeshSize)
 {
 	/*gef::Material* sandMat = new gef::Material();
 	gef::Colour* sand = new gef::Colour(0.761f, 0.698f, 0.502f, 1);
@@ -51,7 +51,7 @@ void Environment::initGround(b2World* world, float xMeshSize, float yMeshSize)
 
 	// Set up the env physics body shape.
 	// *SOMEHOW NEED TO SET THIS TO THE SCALE OF THE MESH OF THIS OBJECT i.e. THE MESH OF THE LOADED MODEL*
-	envPolygonShape.SetAsBox(xMeshSize * 0.5f, yMeshSize * 0.5f);
+	envPolygonShape.SetAsBox(xMeshSize * 0.32f, yMeshSize * 0.32f);
 
 	// create the fixture
 	envFixDef.shape = &envPolygonShape;
@@ -61,7 +61,7 @@ void Environment::initGround(b2World* world, float xMeshSize, float yMeshSize)
 	envBody->CreateFixture(&envFixDef);
 }
 
-void Environment::buildTransform()
+void Ground::buildTransform()
 {
 	UpdateFromSimulation(envBody);
 

@@ -155,41 +155,41 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\env\Ground.cpp" />
+    <ClCompile Include="src\env\Dunes.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="src\Anim\motion_clip_player.cpp" />
-    <ClCompile Include="src\Char\Enemy.cpp" />
-    <ClCompile Include="src\Char\Player.cpp" />
-    <ClCompile Include="src\Env\DirtGround.cpp" />
-    <ClCompile Include="src\Env\Environment.cpp" />
-    <ClCompile Include="src\Env\Railing.cpp" />
+    <ClCompile Include="src\anim\motion_clip_player.cpp" />
+    <ClCompile Include="src\char\Enemy.cpp" />
+    <ClCompile Include="src\char\Player.cpp" />
+    <ClCompile Include="src\env\Background.cpp" />
     <ClCompile Include="main_d3d11.cpp" />
-    <ClCompile Include="src\Object\game_object.cpp" />
-    <ClCompile Include="src\State\GameState.cpp" />
-    <ClCompile Include="src\State\Level_1_State.cpp" />
-    <ClCompile Include="src\State\MenuState.cpp" />
-    <ClCompile Include="src\State\OptionsState.cpp" />
-    <ClCompile Include="src\State\PauseState.cpp" />
-    <ClCompile Include="src\State\SplashState.cpp" />
-    <ClCompile Include="src\State\StateMachine.cpp" />
-    <ClCompile Include="src\Texture\load_texture.cpp" />
+    <ClCompile Include="src\object\game_object.cpp" />
+    <ClCompile Include="src\state\GameState.cpp" />
+    <ClCompile Include="src\state\Level_1_State.cpp" />
+    <ClCompile Include="src\state\MenuState.cpp" />
+    <ClCompile Include="src\state\OptionsState.cpp" />
+    <ClCompile Include="src\state\PauseState.cpp" />
+    <ClCompile Include="src\state\SplashState.cpp" />
+    <ClCompile Include="src\state\StateMachine.cpp" />
+    <ClCompile Include="src\texture\load_texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\env\Ground.h" />
+    <ClInclude Include="src\env\Dunes.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="src\Anim\motion_clip_player.h" />
-    <ClInclude Include="src\Char\Enemy.h" />
-    <ClInclude Include="src\Char\Player.h" />
-    <ClInclude Include="src\Env\DirtGround.h" />
-    <ClInclude Include="src\Env\Environment.h" />
-    <ClInclude Include="src\Env\Railing.h" />
-    <ClInclude Include="src\Object\game_object.h" />
-    <ClInclude Include="src\State\GameState.h" />
-    <ClInclude Include="src\State\Level_1_State.h" />
-    <ClInclude Include="src\State\MenuState.h" />
-    <ClInclude Include="src\State\OptionsState.h" />
-    <ClInclude Include="src\State\PauseState.h" />
-    <ClInclude Include="src\State\SplashState.h" />
-    <ClInclude Include="src\State\StateMachine.h" />
-    <ClInclude Include="src\Texture\load_texture.h" />
+    <ClInclude Include="src\anim\motion_clip_player.h" />
+    <ClInclude Include="src\char\Enemy.h" />
+    <ClInclude Include="src\char\Player.h" />
+    <ClInclude Include="src\env\Background.h" />
+    <ClInclude Include="src\object\game_object.h" />
+    <ClInclude Include="src\state\GameState.h" />
+    <ClInclude Include="src\state\Level_1_State.h" />
+    <ClInclude Include="src\state\MenuState.h" />
+    <ClInclude Include="src\state\OptionsState.h" />
+    <ClInclude Include="src\state\PauseState.h" />
+    <ClInclude Include="src\state\SplashState.h" />
+    <ClInclude Include="src\state\StateMachine.h" />
+    <ClInclude Include="src\texture\load_texture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
