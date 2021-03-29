@@ -20,8 +20,7 @@ protected:
 private:
 	StateMachine* stateMachine;
 
-	gef::Texture* initOptionsGraphic(gef::Platform& platform_);
-	gef::Texture* optionsGraphic;
+	gef::Texture* initStateGraphic(gef::Platform& platform_);
 
 	float stateTimer;
 	float totalTimeElapsed;

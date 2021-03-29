@@ -8,11 +8,11 @@ namespace gef
 
 class Platform;
 
-class MenuState : public GameState
+class HowToPlay : public GameState
 {
 public:
-	MenuState(StateMachine* sm);
-	~MenuState() override;
+	HowToPlay(StateMachine* sm);
+	~HowToPlay() override;
 
 	void onEnter() override;
 	void onExit() override;
@@ -23,15 +23,8 @@ public:
 protected:
 
 private:
+
 	StateMachine* stateMachine;
-
 	gef::Texture* initStateGraphic(gef::Platform& platform_);
-
-	/*gef::Texture* initMenuGraphic(gef::Platform& platform_);
-	gef::Texture* mainMenuGraphic;*/
-
-	bool isStartGame;
-	bool isOptions;
-	bool isHowToPlay;
+	bool back;
 };
-

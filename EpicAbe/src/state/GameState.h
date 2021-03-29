@@ -28,6 +28,10 @@ public:
 protected:
 
 	StateMachine* stateMachine;
+
+	virtual gef::Texture* initStateGraphic(gef::Platform& platform_) = 0;
+	gef::Texture* stateGraphic;
+
 	
 private:
 	

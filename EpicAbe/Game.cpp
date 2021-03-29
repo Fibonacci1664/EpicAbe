@@ -1,7 +1,4 @@
 #include "Game.h"
-#include "src/env/Environment.h"
-#include "src/env/Railing.h"
-#include "src/env/DirtGround.h"
 #include "src/char/Player.h"
 #include "src/state/StateMachine.h"
 

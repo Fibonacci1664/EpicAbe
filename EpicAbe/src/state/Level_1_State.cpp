@@ -1,10 +1,3 @@
-#include "Level_1_State.h"
-#include "StateMachine.h"
-#include "../char/Player.h"
-#include "../env/Dunes.h"
-#include "../env/Ground.h"
-#include "../env/Background.h"
-
 #include <graphics/renderer_3d.h>
 #include <graphics/sprite_renderer.h>
 #include <graphics/font.h>
@@ -13,9 +6,18 @@
 #include <graphics/mesh.h>
 #include <system/debug_log.h>
 
+#include "Level_1_State.h"
+#include "StateMachine.h"
+#include "../char/Player.h"
+#include "../env/Dunes.h"
+#include "../env/Ground.h"
+#include "../env/Background.h"
+#include "../texture/load_texture.h"
+
 Level_1_State::Level_1_State(StateMachine* sm)
 {
 	stateMachine = sm;
+	stateGraphic = nullptr;
 	fps = 0;
 	stateTimer = 0;
 	totalTimeElapsed = 0;
@@ -23,7 +25,7 @@ Level_1_State::Level_1_State(StateMachine* sm)
 	quitGame = false;
 
 	initCamera();
-	SetupLights();	
+	SetupLights();
 	initDunes();
 	initBackdropScenery();
 	initGround();
@@ -35,9 +37,18 @@ Level_1_State::~Level_1_State()
 	
 }
 
+void Level_1_State::initLevel()
+{
+	
+}
+
+
 void Level_1_State::onEnter()
 {
-	//updateCamera();
+	/*if (stateGraphic == nullptr)
+	{
+		initStateGraphic(stateMachine->getPlatform());
+	}*/
 }
 
 void Level_1_State::onExit()
@@ -56,6 +67,8 @@ void Level_1_State::handleInput(float dt)
 
 bool Level_1_State::update(float dt)
 {
+	//stateTimer += dt;
+
 	// THIS NEEDS TO BE THE FIRST THING DONE IN UPDATE!
 	handleInput(dt);
 
@@ -69,6 +82,7 @@ bool Level_1_State::update(float dt)
 	if (isPaused)
 	{
 		stateMachine->setState("PauseMenu");
+		return false;
 	}
 
 	fps = 1.0f / dt;
@@ -290,4 +304,11 @@ gef::Mesh* Level_1_State::GetMeshFromSceneAssets(gef::Scene* scene)
 		mesh = scene->meshes.front();
 
 	return mesh;
+}
+
+gef::Texture* Level_1_State::initStateGraphic(gef::Platform& platform_)
+{
+	stateGraphic = CreateTextureFromPNG("level_1.png", platform_);
+
+	return stateGraphic;
 }

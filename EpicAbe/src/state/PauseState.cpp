@@ -1,16 +1,19 @@
-#include <graphics/renderer_3d.h>
 #include <graphics/sprite_renderer.h>
-#include <graphics/font.h>
+#include <graphics/sprite.h>
 #include <input/sony_controller_input_manager.h>
 
 #include "PauseState.h"
 #include "StateMachine.h"
+#include "../texture/load_texture.h"
 
 PauseState::PauseState(StateMachine* sm)
 {
 	stateMachine = sm;
+	stateGraphic = nullptr;
 	stateTimer = 0;
 	unpause = false;
+	gotoMainMenu = false;
+	gotoOptions = false;
 }
 
 PauseState::~PauseState()
@@ -20,20 +23,33 @@ PauseState::~PauseState()
 
 void PauseState::onEnter()
 {
-
+	if (stateGraphic == nullptr)
+	{
+		initStateGraphic(stateMachine->getPlatform());
+	}
 }
 
 void PauseState::onExit()
 {
 	stateTimer = 0;
 	unpause = false;
+	gotoMainMenu = false;
+	gotoOptions = false;
 }
 
 void PauseState::handleInput(float dt)
 {
-	if (stateMachine->getSonyController()->buttons_released() & gef_SONY_CTRL_SELECT)
+	if (stateMachine->getSonyController()->buttons_released() & gef_SONY_CTRL_CIRCLE)
 	{
 		unpause = true;		
+	}
+	else if (stateMachine->getSonyController()->buttons_released() & gef_SONY_CTRL_SQUARE)
+	{
+		gotoMainMenu = true;
+	}
+	else if (stateMachine->getSonyController()->buttons_released() & gef_SONY_CTRL_TRIANGLE)
+	{
+		gotoOptions = true;
 	}
 }
 
@@ -45,6 +61,14 @@ bool PauseState::update(float dt)
 	{
 		stateMachine->setState("Level_1");
 	}
+	else if (gotoMainMenu)
+	{
+		stateMachine->setState("MainMenu");
+	}
+	else if (gotoOptions)
+	{
+		stateMachine->setState("Options");
+	}
 
 	return false;
 }
@@ -53,14 +77,19 @@ void PauseState::render()
 {
 	stateMachine->getSpriteRenderer()->Begin();
 
-	// render "TO START" text
-	stateMachine->getFont()->RenderText(
-		stateMachine->getSpriteRenderer(),
-		gef::Vector4(stateMachine->getPlatform().width() * 0.5f, stateMachine->getPlatform().height() * 0.5f, -0.99f),
-		1.0f,
-		0xffffffff,
-		gef::TJ_CENTRE,
-		"YOU PAUSED THE GAME!");
+	gef::Sprite pauseMenu;
+	pauseMenu.set_texture(stateGraphic);
+	pauseMenu.set_position(stateMachine->getPlatform().width() * 0.5f, stateMachine->getPlatform().height() * 0.5f, -0.99f);
+	pauseMenu.set_height(1125.0f);
+	pauseMenu.set_width(2000.0f);
+	stateMachine->getSpriteRenderer()->DrawSprite(pauseMenu);
 
 	stateMachine->getSpriteRenderer()->End();
+}
+
+gef::Texture* PauseState::initStateGraphic(gef::Platform& platform_)
+{
+	stateGraphic = CreateTextureFromPNG("pauseMenu.png", platform_);
+
+	return stateGraphic;
 }

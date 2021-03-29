@@ -7,6 +7,7 @@
 #include "Level_1_State.h"
 #include "PauseState.h"
 #include "OptionsState.h"
+#include "HowToPlay.h"
 #include "system/platform.h"
 
 StateMachine::StateMachine(gef::Platform& platform_) : platform(platform_)
@@ -73,6 +74,7 @@ void StateMachine::initStates()
 	level_1_state = new Level_1_State(this);
 	pauseState = new PauseState(this);
 	optionsState = new OptionsState(this);
+	howToPlay = new HowToPlay(this);
 
 	currentState = splashState;
 	initStateMap();
@@ -86,6 +88,7 @@ void StateMachine::initStateMap()
 	states.insert(std::make_pair("Level_1", level_1_state));
 	states.insert(std::make_pair("PauseMenu", pauseState));
 	states.insert(std::make_pair("Options", optionsState));
+	states.insert(std::make_pair("HowToPlay", howToPlay));
 }
 
 void StateMachine::setState(std::string newState)

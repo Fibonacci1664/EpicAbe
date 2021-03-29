@@ -8,6 +8,7 @@ class GameState;
 class Level_1_State;
 class PauseState;
 class OptionsState;
+class HowToPlay;
 class b2World;
 
 namespace gef
@@ -53,6 +54,7 @@ public:
 	Level_1_State* level_1_state;
 	PauseState* pauseState;
 	OptionsState* optionsState;
+	HowToPlay* howToPlay;
 
 private:
 	

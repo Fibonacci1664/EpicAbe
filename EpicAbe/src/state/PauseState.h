@@ -20,7 +20,11 @@ protected:
 private:
 	StateMachine* stateMachine;
 
+	gef::Texture* initStateGraphic(gef::Platform& platform_);
+
 	float stateTimer;
 	bool unpause;
+	bool gotoMainMenu;
+	bool gotoOptions;
 };
 

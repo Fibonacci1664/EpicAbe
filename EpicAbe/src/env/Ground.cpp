@@ -26,19 +26,6 @@ void Ground::render(gef::Renderer3D* rend3D)
 
 void Ground::initGround(b2World* world, float xMeshSize, float yMeshSize)
 {
-	/*gef::Material* sandMat = new gef::Material();
-	gef::Colour* sand = new gef::Colour(0.761f, 0.698f, 0.502f, 1);
-	sandMat->set_colour(sand->GetABGR());
-
-	gef::Material* matArr[6];
-
-	for (int i = 0; i < 6; ++i)
-	{
-		matArr[i] = nullptr;
-		matArr[i] = sandMat;
-	}
-
-	set_mesh(pb->CreateBoxMesh(m_scale * 0.5f, gef::Vector4(0, 0, 0), matArr));*/
 	currentType = ObjectType::ENVIRONMENT;
 
 	// Set up box2d static body for env.
@@ -64,7 +51,4 @@ void Ground::initGround(b2World* world, float xMeshSize, float yMeshSize)
 void Ground::buildTransform()
 {
 	UpdateFromSimulation(envBody);
-
-	/*transform_.SetTranslation(gef::Vector4(envBody->GetPosition().x, envBody->GetPosition().y, 0));
-	set_transform(transform_);*/
 }

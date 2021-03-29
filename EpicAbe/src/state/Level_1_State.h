@@ -43,6 +43,7 @@ public:
 protected:
 
 private:
+	void initLevel();
 	void initCamera();
 	void initPlayer();
 	//void initEnemy();
@@ -57,7 +58,7 @@ private:
 	gef::Scene* LoadSceneAssets(gef::Platform& platform, const char* filename);
 	gef::Mesh* GetMeshFromSceneAssets(gef::Scene* scene);
 
-	void CleanUpFont();
+	gef::Texture* initStateGraphic(gef::Platform& platform_);
 
 	// CAMERA STUFF
 	gef::Matrix44 projection_matrix;

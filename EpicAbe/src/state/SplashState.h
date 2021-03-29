@@ -21,8 +21,11 @@ protected:
 
 private:
 	StateMachine* stateMachine;
-	gef::Texture* initSplashLogo(gef::Platform& platform_);
-	gef::Texture* splashLogo;
+
+	gef::Texture* initStateGraphic(gef::Platform& platform_);
+
+	/*gef::Texture* initSplashLogo(gef::Platform& platform_);
+	gef::Texture* splashLogo;*/
 
 	float stateTimer;
 };
