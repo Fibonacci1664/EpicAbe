@@ -36,14 +36,16 @@ Player::Player(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation)
 	m_rotation = rotation;
 
 	playerYPos = 0;
-	speed = 1000;
+	speed = 50;
 	maxSpeed = 3;
-	jumpForce = 500.0f;		// THIS NEEDS TO BE SET V LOW IF USING IMPULSE.
+	jumpForce = 60.0f;		// THIS NEEDS TO BE SET V LOW IF USING IMPULSE.
 	playerHealth = 10;
 	onGround = false;
 	hasCollided = false;
 	facingLeft = false;
 	facingRight = true;
+	isJumping = false;
+	isMoving = false;
 
 	leftStickX = 0;
 	rightStickX = 0;
@@ -77,6 +79,51 @@ void Player::handleInput(float dt)
 	checkSticks(dt);
 	switchButtonsDown(dt);
 	// END HANDLE INPUT
+}
+
+bool Player::update(float dt, b2World* world_)
+{
+	//playerYPos = playerBody->GetPosition().y;
+
+	//handleInput(dt);
+
+	if (playerSkinnedMesh)
+	{
+		// update the pose in the anim player from the animation
+		animationPlayer.Update(dt, playerSkinnedMesh->bind_pose());
+
+		// update the bone matrices that are used for rendering the character
+		// from the newly updated pose in the anim player
+		playerSkinnedMesh->UpdateBoneMatrices(animationPlayer.pose());
+	}
+
+	checkCollisions(dt, world_);
+	buildTransform();
+
+	return true;
+}
+
+void Player::render(gef::Renderer3D* rend3D)
+{
+	//rend3D->DrawMesh(*this);
+
+	// draw the player, the pose is defined by the bone matrices
+	if (playerSkinnedMesh)
+	{
+		rend3D->DrawSkinnedMesh(*this, playerSkinnedMesh->bone_matrices());
+	}
+}
+
+void Player::initInputManager(gef::Platform& platform,
+	gef::InputManager* im,
+	gef::SonyControllerInputManager* scim,
+	const gef::SonyController* controller)
+{
+	m_platform = &platform;
+
+	m_im = im;
+	m_scim = scim;
+	m_controller = controller;
 }
 
 void Player::checkCollisions(float dt, b2World* world_)
@@ -118,6 +165,8 @@ void Player::checkCollisions(float dt, b2World* world_)
 				{
 					onGround = true;
 				}
+
+				// Set for collisions with collectable and enemy and goal.
 			}
 		}
 		else
@@ -129,51 +178,6 @@ void Player::checkCollisions(float dt, b2World* world_)
 		contact = contact->GetNext();
 	}
 }
-
-bool Player::update(float dt, b2World* world_)
-{
-	//playerYPos = playerBody->GetPosition().y;
-
-	handleInput(dt);
-
-	if (playerSkinnedMesh)
-	{
-		// update the pose in the anim player from the animation
-		animationPlayer.Update(dt, playerSkinnedMesh->bind_pose());
-
-		// update the bone matrices that are used for rendering the character
-		// from the newly updated pose in the anim player
-		playerSkinnedMesh->UpdateBoneMatrices(animationPlayer.pose());
-	}
-
-	checkCollisions(dt, world_);
-	buildTransform();
-
-	return true;
-}
-
-void Player::render(gef::Renderer3D* rend3D)
-{
-	//rend3D->DrawMesh(*this);
-
-	// draw the player, the pose is defined by the bone matrices
-	if (playerSkinnedMesh)
-		rend3D->DrawSkinnedMesh(*this, playerSkinnedMesh->bone_matrices());
-}
-
-void Player::initInputManager(	gef::Platform& platform,
-								gef::InputManager* im,
-								gef::SonyControllerInputManager* scim,
-								const gef::SonyController* controller)
-{
-	m_platform = &platform;
-
-	m_im = im;
-	m_scim = scim;
-	m_controller = controller;
-}
-
-
 
 void Player::setButtonState()
 {
@@ -208,7 +212,7 @@ void Player::switchButtonsDown(float dt)
 				if (onGround)
 				{
 					jump(dt);
-					onGround = false;		// If we pressed the jump button, we must be in the air, i.e. we're NOT on the ground.
+					onGround = false;
 				}
 				break;
 			case gef_SONY_CTRL_SQUARE:
@@ -335,11 +339,6 @@ void Player::checkSticks(float dt)
 				animationPlayer.set_clip(idleAnimation);
 			}
 
-			/*if (playerBody->GetLinearVelocity().x == 0)
-			{
-				animationPlayer.set_playback_speed(0);
-			}*/
-
 			/*if (leftStickY < 0)
 			{
 				move('u', leftStickY, dt);
@@ -354,6 +353,8 @@ void Player::checkSticks(float dt)
 
 void Player::move(char direction, float scale, float dt)
 {
+	//isMoving = true;
+
 	// UP = -1 and DOWN = 1.
 	switch (direction)
 	{
@@ -412,90 +413,21 @@ void Player::buildTransform()
 
 void Player::jump(float dt)
 {
+	// If we pressed the jump button, we must be in the air, i.e. we're NOT on the ground.
 	playerBody->ApplyForceToCenter(b2Vec2(0, jumpForce), true);
 
 	animationPlayer.set_clip(jumpAnimation);
 	animationPlayer.set_looping(false);
-
 	
 	//playerBody->ApplyLinearImpulseToCenter(b2Vec2(0, jumpForce), true);
 	//playerBody->ApplyLinearImpulse(b2Vec2(0, jumpForce), b2Vec2(playerBody->GetPosition().x - (m_scale.x() * 0.5f * leftStickX), playerBody->GetPosition().y - (m_scale.y() * 0.5f)), true);
-
-	//onGround = false;
-}
-
-gef::Vector4* Player::getPosition()
-{
-	return &m_position;
-}
-
-void Player::setRotation(gef::Vector4 newRot)
-{
-	m_rotation.set_x(newRot.x());
-	m_rotation.set_y(newRot.y());
-	m_rotation.set_z(newRot.z());
-}
-
-float Player::getLeftStickAngle()
-{
-	return leftStickAngleDeg;
-}
-
-float Player::getPlayerYPos()
-{
-	return playerYPos;
-}
-
-bool Player::getHasCollided()
-{
-	return hasCollided;
-}
-
-b2Body* Player::getCollidingBodyA()
-{
-	return bodyA;
-}
-
-b2Body* Player::getCollidingBodyB()
-{
-	return bodyB;
-}
-
-b2Body* Player::getPlayerBody()
-{
-	return playerBody;
-}
-
-int Player::getPlayerHealth()
-{
-	return playerHealth;
-}
-
-bool Player::isOnGround()
-{
-	return onGround;
-}
-
-bool Player::getIsFacingLeft()
-{
-	return facingLeft;
-}
-
-bool Player::getIsFacingRight()
-{
-	return facingRight;
-}
-
-const gef::SonyController* Player::getSonyController()
-{
-	return m_controller;
 }
 
 void Player::initModelPlayer()
 {
 	currentType = ObjectType::PLAYER;
 	playerModel = new gef::Scene();
-	loadAsset(*m_platform, "boss.scn");
+	loadAsset(*m_platform, "abe.scn");
 }
 
 void Player::initPhysicsBody(b2World* world)
@@ -510,7 +442,7 @@ void Player::initPhysicsBody(b2World* world)
 	playerBody = world->CreateBody(&playerBodyDef);
 	
 	// Set up the players invisible physics body shape, this needs to match the mesh sizes obv or you'll get strange collision behaviour.
-	playerPolygonShape.SetAsBox(meshXdimension * 0.001f, meshYDimension * 0.0005f);
+	playerPolygonShape.SetAsBox(meshXdimension * 0.001f, meshYDimension * 0.00005f);
 
 	// Set up the players body fixture.
 	playerFixtureDef.shape = &playerPolygonShape;
@@ -541,15 +473,15 @@ void Player::loadAsset(gef::Platform& platform, const char* assetFilePath)
 	}
 
 	// anims
-	idleAnimation = LoadAnimation("@oldIdle.scn", "");
-	/*runAnimation = LoadAnimation("abe/abe@run.scn", "");
-	jumpAnimation = LoadAnimation("abe/abe@jump.scn", "");*/
+	idleAnimation = LoadAnimation("@idle.scn", "");
+	runAnimation = LoadAnimation("@run.scn", "");
+	jumpAnimation = LoadAnimation("@jump.scn", "");
 
 	if (idleAnimation)
 	{
 		animationPlayer.set_clip(idleAnimation);
 		animationPlayer.set_looping(true);
-		//animationPlayer.set_anim_time(0.0f);
+		animationPlayer.set_anim_time(0.0f);
 		animationPlayer.set_playback_speed(1.0f);
 	}
 }
@@ -623,4 +555,72 @@ gef::Skeleton* Player::GetFirstSkeleton(gef::Scene* scene)
 	}
 
 	return skeleton;
+}
+
+
+gef::Vector4* Player::getPosition()
+{
+	return &m_position;
+}
+
+void Player::setRotation(gef::Vector4 newRot)
+{
+	m_rotation.set_x(newRot.x());
+	m_rotation.set_y(newRot.y());
+	m_rotation.set_z(newRot.z());
+}
+
+float Player::getLeftStickAngle()
+{
+	return leftStickAngleDeg;
+}
+
+float Player::getPlayerYPos()
+{
+	return playerYPos;
+}
+
+bool Player::getHasCollided()
+{
+	return hasCollided;
+}
+
+b2Body* Player::getCollidingBodyA()
+{
+	return bodyA;
+}
+
+b2Body* Player::getCollidingBodyB()
+{
+	return bodyB;
+}
+
+b2Body* Player::getPlayerBody()
+{
+	return playerBody;
+}
+
+int Player::getPlayerHealth()
+{
+	return playerHealth;
+}
+
+bool Player::isOnGround()
+{
+	return onGround;
+}
+
+bool Player::getIsFacingLeft()
+{
+	return facingLeft;
+}
+
+bool Player::getIsFacingRight()
+{
+	return facingRight;
+}
+
+const gef::SonyController* Player::getSonyController()
+{
+	return m_controller;
 }

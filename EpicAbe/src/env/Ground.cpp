@@ -37,8 +37,7 @@ void Ground::initGround(b2World* world, float xMeshSize, float yMeshSize)
 	envBody = world->CreateBody(&envBodyDef);
 
 	// Set up the env physics body shape.
-	// *SOMEHOW NEED TO SET THIS TO THE SCALE OF THE MESH OF THIS OBJECT i.e. THE MESH OF THE LOADED MODEL*
-	envPolygonShape.SetAsBox(xMeshSize * 0.32f, yMeshSize * 0.32f);
+	envPolygonShape.SetAsBox(xMeshSize * 0.5f, yMeshSize * 0.1f);
 
 	// create the fixture
 	envFixDef.shape = &envPolygonShape;
@@ -50,5 +49,20 @@ void Ground::initGround(b2World* world, float xMeshSize, float yMeshSize)
 
 void Ground::buildTransform()
 {
+	// setup object rotation
+	//rotZ.RotationZ(m_rotation.z());
+	//rotY.RotationY(m_rotation.y());
+
+	//// setup the object translation
+	//m_position = gef::Vector4(m_position.x(), m_position.y(), m_position.z());
+
+	//// Set the scale
+	//sca.Scale(m_scale);
+
+	//// build object transformation matrix
+	//transform_ = rotY * rotZ * sca;
+	//transform_.SetTranslation(m_position);
+	//set_transform(transform_);
+
 	UpdateFromSimulation(envBody);
 }

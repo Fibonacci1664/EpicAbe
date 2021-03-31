@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\env\Foreground.cpp" />
     <ClCompile Include="src\env\Ground.cpp" />
     <ClCompile Include="src\env\Dunes.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -175,6 +176,7 @@
     <ClCompile Include="src\texture\load_texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\env\Foreground.h" />
     <ClInclude Include="src\env\Ground.h" />
     <ClInclude Include="src\env\Dunes.h" />
     <ClInclude Include="Game.h" />

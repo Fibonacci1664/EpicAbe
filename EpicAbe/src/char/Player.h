@@ -150,4 +150,6 @@ private:
 
 	bool facingLeft;
 	bool facingRight;
+	bool isJumping;
+	bool isMoving;
 };

@@ -12,6 +12,7 @@
 #include "../env/Dunes.h"
 #include "../env/Ground.h"
 #include "../env/Background.h"
+#include "../env/Foreground.h"
 #include "../texture/load_texture.h"
 
 Level_1_State::Level_1_State(StateMachine* sm)
@@ -27,7 +28,8 @@ Level_1_State::Level_1_State(StateMachine* sm)
 	initCamera();
 	SetupLights();
 	initDunes();
-	initBackdropScenery();
+	initBackground();
+	initForeground();
 	initGround();
 	initPlayer();
 }
@@ -63,6 +65,8 @@ void Level_1_State::handleInput(float dt)
 	{
 		isPaused = true;		
 	}
+
+	player->handleInput(dt);
 }
 
 bool Level_1_State::update(float dt)
@@ -70,7 +74,7 @@ bool Level_1_State::update(float dt)
 	//stateTimer += dt;
 
 	// THIS NEEDS TO BE THE FIRST THING DONE IN UPDATE!
-	handleInput(dt);
+	//handleInput(dt);
 
 	totalTimeElapsed += dt;
 
@@ -93,6 +97,7 @@ bool Level_1_State::update(float dt)
 	float timeStep = 1.0f / 60.0f;
 
 	player->update(dt, stateMachine->getPhysicsWorld());
+	ground->update(dt);
 	/*enemy->update(frame_time);
 	enemy->followPlayer(player, frame_time);*/
 
@@ -106,6 +111,7 @@ void Level_1_State::render()
 	player->render(stateMachine->get3DRenderer());
 	dunes->render(stateMachine->get3DRenderer());
 	background->render(stateMachine->get3DRenderer());
+	foreground->render(stateMachine->get3DRenderer());
 	ground->render(stateMachine->get3DRenderer());
 	stateMachine->getSpriteRenderer()->End();
 
@@ -125,7 +131,7 @@ void Level_1_State::initCamera()
 	stateMachine->get3DRenderer()->set_projection_matrix(projection_matrix);
 
 	// view
-	gef::Vector4 camera_eye(0.0f, 5.0f, 5.0f);
+	gef::Vector4 camera_eye(0.0f, 5.0f, 15.0f);
 	gef::Vector4 camera_lookat(0.0f, 0.0f, -5.0f);
 	gef::Vector4 camera_up(0.0f, 1.0f, 0.0f);
 	view_matrix.LookAt(camera_eye, camera_lookat, camera_up);
@@ -134,7 +140,7 @@ void Level_1_State::initCamera()
 
 void Level_1_State::initPlayer()
 {
-	player = new Player(gef::Vector4(17, 5, 0), gef::Vector4(0.005f, 0.005f, 0.005f), gef::Vector4(0, 3.1415f, 0));
+	player = new Player(gef::Vector4(17, 5, 0), gef::Vector4(0.005f, 0.005f, 0.005f), gef::Vector4(0, 0, 0));
 	player->initInputManager(stateMachine->getPlatform(),
 							stateMachine->getInputManagaer(),
 							stateMachine->getSonyControllerIM(),
@@ -145,7 +151,7 @@ void Level_1_State::initPlayer()
 
 void Level_1_State::initGround()
 {
-	loadAsset("env/desert_ground.scn");
+	loadAsset("ground.scn");
 
 	gef::Mesh* groundMesh = GetMeshFromSceneAssets(scene_assets_);
 
@@ -153,7 +159,7 @@ void Level_1_State::initGround()
 	float ySize = groundMesh->aabb().max_vtx().y() - groundMesh->aabb().min_vtx().y();
 
 	//env = new Environment(gef::Vector4(-5 + i, 0, 0), gef::Vector4(xSize, ySize * 0.05f, 1.0f), gef::Vector4(0, 3.1415 0));
-	ground = new Ground(gef::Vector4(15, 0, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+	ground = new Ground(gef::Vector4(63.5, 0.001f, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
 	ground->initGround(stateMachine->getPhysicsWorld(), xSize, ySize);
 
 	if (scene_assets_)
@@ -185,13 +191,13 @@ void Level_1_State::initDunes()
 	}
 }
 
-void Level_1_State::initBackdropScenery()
+void Level_1_State::initBackground()
 {
-	loadAsset("env/desert.scn");
+	loadAsset("background.scn");
 
 	gef::Mesh* backgroundMesh = GetMeshFromSceneAssets(scene_assets_);
 
-	background = new Background(gef::Vector4(15, 0, -2.0f), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+	background = new Background(gef::Vector4(18.5f, 0, -1.9f), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
 	background->initBackground();
 
 	if (scene_assets_)
@@ -204,9 +210,28 @@ void Level_1_State::initBackdropScenery()
 	}
 }
 
+void Level_1_State::initForeground()
+{
+	loadAsset("foreground.scn");
+
+	gef::Mesh* foregroundMesh = GetMeshFromSceneAssets(scene_assets_);
+
+	foreground = new Foreground(gef::Vector4(21, -1, 2.9f), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+	foreground->initForeground();
+
+	if (scene_assets_)
+	{
+		foreground->set_mesh(foregroundMesh);
+	}
+	else
+	{
+		gef::DebugOut("Foreground model failed to load\n");
+	}
+}
+
 void Level_1_State::updateCamera()
 {
-	gef::Vector4 camPos = gef::Vector4(player->getPosition()->x() + 3.0f, 2.5f, player->getPosition()->z() + 7.0f);
+	gef::Vector4 camPos = gef::Vector4(player->getPosition()->x(), 2.5f, player->getPosition()->z() + 12.0f);
 	gef::Vector4 camLookAt = gef::Vector4(player->getPosition()->x(), 0, -1000000.0f);
 	gef::Vector4 camUp = gef::Vector4(0.0f, 1.0f, 0.0f);
 

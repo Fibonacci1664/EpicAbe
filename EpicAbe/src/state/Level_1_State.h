@@ -24,6 +24,7 @@ namespace gef
 class StateMachine;
 class Ground;
 class Background;
+class Foreground;
 class Dunes;
 class Player;
 class Enemy;
@@ -49,7 +50,8 @@ private:
 	//void initEnemy();
 	void initGround();
 	void initDunes();
-	void initBackdropScenery();
+	void initBackground();
+	void initForeground();
 	void updateCamera();
 	void DrawHUD();
 	void SetupLights();
@@ -70,6 +72,9 @@ private:
 
 	// BACKGROUND STUFF
 	Background* background;
+
+	// FOREGROUND STUFF
+	Foreground* foreground;
 
 	// DUNES STUFF
 	Dunes* dunes;
