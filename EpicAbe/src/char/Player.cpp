@@ -157,7 +157,7 @@ void Player::checkCollisions(float dt, b2World* world_)
 				if (*objectA->getType() == ObjectType::ENEMY && *objectB->getType() == ObjectType::PLAYER
 					|| *objectB->getType() == ObjectType::ENEMY && *objectA->getType() == ObjectType::PLAYER)
 				{
-					--playerHealth;
+					playerHealth = (playerHealth - 1) * dt;
 				}
 				
 				if (*objectA->getType() == ObjectType::ENVIRONMENT && *objectB->getType() == ObjectType::PLAYER

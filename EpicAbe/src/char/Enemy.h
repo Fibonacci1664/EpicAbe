@@ -21,7 +21,8 @@ public:
 	void update(float dt);
 	void render(gef::Renderer3D* rend3D);
 
-	void initEnemy(b2World* world, float xMeshSize, float yMeshSize, float randFriction);
+	void initEnemy(b2World* world, float xMeshSize, float yMeshSize);
+	void move(float dt);
 	void followPlayer(Player* player, float dt);
 	void buildTransform();
 
@@ -29,6 +30,7 @@ public:
 	void setPosition(gef::Vector4* newPosition);
 	void setRotation(gef::Vector4 newRot);
 	void setSpeed(float newSpeed);
+	void setStartLocation(float startLoc);
 
 private:
 

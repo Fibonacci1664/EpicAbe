@@ -7,7 +7,7 @@ Enemy::Enemy(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation)
 	m_position = position;
 	m_scale = scale;
 	m_rotation = rotation;
-	speed = 0.9f;
+	speed = 4;
 	m_startPos = position;			// Start position is saved in case we ever need to reset back to start pos.
 }
 
@@ -31,7 +31,7 @@ void Enemy::render(gef::Renderer3D* rend3D)
 	rend3D->DrawMesh(*this);
 }
 
-void Enemy::initEnemy(b2World* world, float xMeshSize, float yMeshSize, float randFriction)
+void Enemy::initEnemy(b2World* world, float xMeshSize, float yMeshSize)
 {
 	currentType = ObjectType::ENEMY;
 
@@ -50,10 +50,22 @@ void Enemy::initEnemy(b2World* world, float xMeshSize, float yMeshSize, float ra
 	// create the fixture
 	enemyFixtureDef.shape = &enemyPolygonShape;
 	enemyFixtureDef.density = 1.0f;
-	enemyFixtureDef.friction = randFriction;
+	enemyFixtureDef.friction = 0;
 
 	// create the fixture on the rigid body
 	enemyBody->CreateFixture(&enemyFixtureDef);
+}
+
+void Enemy::move(float dt)
+{
+	float force = 2.0f;
+
+	if (enemyBody->GetPosition().x > (m_startPos.x() + 1) || enemyBody->GetPosition().x < (m_startPos.x() - 1))
+	{
+		force = -force;
+	}
+
+	enemyBody->ApplyForceToCenter(b2Vec2(force * speed * dt, 0), true);
 }
 
 void Enemy::followPlayer(Player* player, float dt)
@@ -115,4 +127,9 @@ void Enemy::setRotation(gef::Vector4 newRot)
 void Enemy::setSpeed(float newSpeed)
 {
 	speed *= newSpeed;
+}
+
+void Enemy::setStartLocation(float startLoc)
+{
+	m_startPos.set_x(startLoc);
 }

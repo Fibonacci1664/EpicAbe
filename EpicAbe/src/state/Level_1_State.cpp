@@ -53,10 +53,7 @@ void Level_1_State::initLevel()
 
 void Level_1_State::onEnter()
 {
-	/*if (stateGraphic == nullptr)
-	{
-		initStateGraphic(stateMachine->getPlatform());
-	}*/
+	
 }
 
 void Level_1_State::onExit()
@@ -113,11 +110,8 @@ bool Level_1_State::update(float dt)
 	for (int i = 0; i < enemies.size(); ++i)
 	{
 		enemies[i]->update(dt);
-		enemies[i]->followPlayer(player, dt);
+		enemies[i]->move(dt);
 	}
-
-	/*enemy->update(dt);
-	enemy->followPlayer(player, dt);*/
 
 	return false;
 }
@@ -127,7 +121,6 @@ void Level_1_State::render()
 	stateMachine->getSpriteRenderer()->Begin();
 
 	player->render(stateMachine->get3DRenderer());
-	//enemy->render(stateMachine->get3DRenderer());
 
 	for (int i = 0; i < enemies.size(); ++i)
 	{
@@ -188,24 +181,28 @@ void Level_1_State::initEnemy()
 	float xSize = deathWormMesh->aabb().max_vtx().x() - deathWormMesh->aabb().min_vtx().x();
 	float ySize = deathWormMesh->aabb().max_vtx().y() - deathWormMesh->aabb().min_vtx().y();
 
+	int counter = 0;
+
 	for (int i = 0; i < 5; ++i)
 	{
-		float randFriction = (float)rand() / RAND_MAX;
 		float randScale = (float)rand() / RAND_MAX;
-		int randLocation = rand() % 25 + 50;
 
-		if (randScale > 0.75f)
+		// Sets up a scale range for the enemy of 0.35 - 0.65
+		if (randScale <= 0.1)
 		{
-			randScale -= 0.5f;
+			randScale += 0.25f;
 		}
-		else if (randScale < 0.25f)
+		else if (randScale >= 0.9)
 		{
-			randScale += 0.5f;
+			randScale -= 0.25f;
 		}
 
-		Enemy* enemy = new Enemy(gef::Vector4(randLocation, 5.0f, 0), gef::Vector4(abs(randScale), abs(randScale), abs(randScale)), gef::Vector4(0, 0, 4.71238f));
-		enemy->initEnemy(stateMachine->getPhysicsWorld(), xSize, ySize, randFriction);
-		enemy->setSpeed(abs(randScale));
+		// Sets up rand x location for the enemy of 40 - 70
+		int randLocation = rand() % 40 + 70;
+
+		Enemy* enemy = new Enemy(gef::Vector4(50 + counter, 5.0f, 0), gef::Vector4(randScale, randScale, randScale), gef::Vector4(0, 0, 4.71238f));
+		enemy->initEnemy(stateMachine->getPhysicsWorld(), xSize, ySize);
+		enemy->setStartLocation(50 + counter);
 
 		if (scene_assets_)
 		{
@@ -217,6 +214,7 @@ void Level_1_State::initEnemy()
 		}
 
 		enemies.push_back(enemy);
+		counter += 10;
 	}
 }
 
