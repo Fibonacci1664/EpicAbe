@@ -6,6 +6,7 @@
 #include <box2d/box2d.h>
 #include <graphics/scene.h>
 #include <maths/matrix44.h>
+#include <../gef_abertay/graphics/point_light.h>
 
 const int WIDTH = 2;
 const int DEPTH = 1;
@@ -25,6 +26,7 @@ class StateMachine;
 class Ground;
 class Background;
 class Foreground;
+class LargePillar;
 class Dunes;
 class Player;
 class Enemy;
@@ -47,11 +49,12 @@ private:
 	void initLevel();
 	void initCamera();
 	void initPlayer();
-	//void initEnemy();
+	void initEnemy();
 	void initGround();
 	void initDunes();
 	void initBackground();
 	void initForeground();
+	void initLargePillars();
 	void updateCamera();
 	void DrawHUD();
 	void SetupLights();
@@ -67,7 +70,6 @@ private:
 	gef::Matrix44 view_matrix;
 
 	// GROUND STUFF
-	//std::vector<Environment*> grounds;
 	Ground* ground;
 
 	// BACKGROUND STUFF
@@ -76,14 +78,18 @@ private:
 	// FOREGROUND STUFF
 	Foreground* foreground;
 
+	// LARGE PILLAR SCENE BLOCKERS
+	std::vector<LargePillar*> largePillars;
+
 	// DUNES STUFF
 	Dunes* dunes;
 
 	// PLAYER STUFF
 	Player* player;
+	gef::PointLight playerLight;
 
 	// ENEMY STUFF
-	Enemy* enemy;
+	std::vector<Enemy*> enemies;
 
 	// LEVEL MODEL LOADING STUFF
 	gef::Scene* scene_assets_;
@@ -96,4 +102,5 @@ private:
 	float totalTimeElapsed;
 	bool isPaused;
 	bool quitGame;
+	bool isDebug;
 };

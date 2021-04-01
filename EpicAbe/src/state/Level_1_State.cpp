@@ -5,15 +5,19 @@
 #include <maths/math_utils.h>
 #include <graphics/mesh.h>
 #include <system/debug_log.h>
+#include <graphics/colour.cpp>
 
 #include "Level_1_State.h"
 #include "StateMachine.h"
 #include "../char/Player.h"
+#include "../char/Enemy.h"
 #include "../env/Dunes.h"
 #include "../env/Ground.h"
 #include "../env/Background.h"
 #include "../env/Foreground.h"
+#include "../env/LargePillar.h"
 #include "../texture/load_texture.h"
+
 
 Level_1_State::Level_1_State(StateMachine* sm)
 {
@@ -24,14 +28,9 @@ Level_1_State::Level_1_State(StateMachine* sm)
 	totalTimeElapsed = 0;
 	isPaused = false;
 	quitGame = false;
+	isDebug = true;
 
-	initCamera();
-	SetupLights();
-	initDunes();
-	initBackground();
-	initForeground();
-	initGround();
-	initPlayer();
+	initLevel();
 }
 
 Level_1_State::~Level_1_State()
@@ -41,9 +40,16 @@ Level_1_State::~Level_1_State()
 
 void Level_1_State::initLevel()
 {
-	
+	initCamera();	
+	initDunes();
+	initBackground();
+	initForeground();
+	initLargePillars();
+	initGround();
+	initPlayer();
+	initEnemy();
+	SetupLights();
 }
-
 
 void Level_1_State::onEnter()
 {
@@ -98,8 +104,20 @@ bool Level_1_State::update(float dt)
 
 	player->update(dt, stateMachine->getPhysicsWorld());
 	ground->update(dt);
-	/*enemy->update(frame_time);
-	enemy->followPlayer(player, frame_time);*/
+
+	for (int i = 0; i < 2; ++i)
+	{
+		largePillars[i]->update(dt);
+	}
+
+	for (int i = 0; i < enemies.size(); ++i)
+	{
+		enemies[i]->update(dt);
+		enemies[i]->followPlayer(player, dt);
+	}
+
+	/*enemy->update(dt);
+	enemy->followPlayer(player, dt);*/
 
 	return false;
 }
@@ -109,11 +127,23 @@ void Level_1_State::render()
 	stateMachine->getSpriteRenderer()->Begin();
 
 	player->render(stateMachine->get3DRenderer());
+	//enemy->render(stateMachine->get3DRenderer());
+
+	for (int i = 0; i < enemies.size(); ++i)
+	{
+		enemies[i]->render(stateMachine->get3DRenderer());
+	}
+
 	dunes->render(stateMachine->get3DRenderer());
 	background->render(stateMachine->get3DRenderer());
 	foreground->render(stateMachine->get3DRenderer());
 	ground->render(stateMachine->get3DRenderer());
 	stateMachine->getSpriteRenderer()->End();
+
+	for (int i = 0; i < 2; ++i)
+	{
+		largePillars[i]->render(stateMachine->get3DRenderer());
+	}
 
 	// start drawing sprites, but don't clear the frame buffer
 	stateMachine->getSpriteRenderer()->Begin(false);
@@ -140,13 +170,54 @@ void Level_1_State::initCamera()
 
 void Level_1_State::initPlayer()
 {
-	player = new Player(gef::Vector4(17, 5, 0), gef::Vector4(0.005f, 0.005f, 0.005f), gef::Vector4(0, 0, 0));
+	player = new Player(gef::Vector4(40, 5, 0), gef::Vector4(0.005f, 0.005f, 0.005f), gef::Vector4(0, 0, 0));
 	player->initInputManager(stateMachine->getPlatform(),
 							stateMachine->getInputManagaer(),
 							stateMachine->getSonyControllerIM(),
 							stateMachine->getSonyController());
 	player->initModelPlayer();
 	player->initPhysicsBody(stateMachine->getPhysicsWorld());
+}
+
+void Level_1_State::initEnemy()
+{
+	loadAsset("deathworm.scn");
+
+	gef::Mesh* deathWormMesh = GetMeshFromSceneAssets(scene_assets_);
+
+	float xSize = deathWormMesh->aabb().max_vtx().x() - deathWormMesh->aabb().min_vtx().x();
+	float ySize = deathWormMesh->aabb().max_vtx().y() - deathWormMesh->aabb().min_vtx().y();
+
+	for (int i = 0; i < 5; ++i)
+	{
+		float randFriction = (float)rand() / RAND_MAX;
+		float randScale = (float)rand() / RAND_MAX;
+		int randLocation = rand() % 25 + 50;
+
+		if (randScale > 0.75f)
+		{
+			randScale -= 0.5f;
+		}
+		else if (randScale < 0.25f)
+		{
+			randScale += 0.5f;
+		}
+
+		Enemy* enemy = new Enemy(gef::Vector4(randLocation, 5.0f, 0), gef::Vector4(abs(randScale), abs(randScale), abs(randScale)), gef::Vector4(0, 0, 4.71238f));
+		enemy->initEnemy(stateMachine->getPhysicsWorld(), xSize, ySize, randFriction);
+		enemy->setSpeed(abs(randScale));
+
+		if (scene_assets_)
+		{
+			enemy->set_mesh(deathWormMesh);
+		}
+		else
+		{
+			gef::DebugOut("Enemy model failed to load\n");
+		}
+
+		enemies.push_back(enemy);
+	}
 }
 
 void Level_1_State::initGround()
@@ -158,7 +229,6 @@ void Level_1_State::initGround()
 	float xSize = groundMesh->aabb().max_vtx().x() - groundMesh->aabb().min_vtx().x();
 	float ySize = groundMesh->aabb().max_vtx().y() - groundMesh->aabb().min_vtx().y();
 
-	//env = new Environment(gef::Vector4(-5 + i, 0, 0), gef::Vector4(xSize, ySize * 0.05f, 1.0f), gef::Vector4(0, 3.1415 0));
 	ground = new Ground(gef::Vector4(63.5, 0.001f, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
 	ground->initGround(stateMachine->getPhysicsWorld(), xSize, ySize);
 
@@ -229,6 +299,33 @@ void Level_1_State::initForeground()
 	}
 }
 
+void Level_1_State::initLargePillars()
+{
+	loadAsset("largePillar.scn");
+
+	gef::Mesh* largePillarMesh = GetMeshFromSceneAssets(scene_assets_);
+
+	float xSize = largePillarMesh->aabb().max_vtx().x() - largePillarMesh->aabb().min_vtx().x();
+	float ySize = largePillarMesh->aabb().max_vtx().y() - largePillarMesh->aabb().min_vtx().y();
+
+	for (int i = 0; i < 2; ++i)
+	{
+		LargePillar* largePillar = new LargePillar(gef::Vector4(35 + (i * 65), 0, 0.5), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+		largePillar->initLargePillar(stateMachine->getPhysicsWorld(), xSize, ySize);
+
+		if (scene_assets_)
+		{
+			largePillar->set_mesh(largePillarMesh);
+		}
+		else
+		{
+			gef::DebugOut("Large Pillar model failed to load\n");
+		}
+
+		largePillars.push_back(largePillar);
+	}
+}
+
 void Level_1_State::updateCamera()
 {
 	gef::Vector4 camPos = gef::Vector4(player->getPosition()->x(), 2.5f, player->getPosition()->z() + 12.0f);
@@ -243,37 +340,41 @@ void Level_1_State::updateCamera()
 
 void Level_1_State::DrawHUD()
 {
-	if (stateMachine->getFont())
+	if (isDebug)
 	{
-		// display frame rate
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 60.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "FPS: %.1f", fps);
+		if (stateMachine->getFont())
+		{
+			// IF SETTING COLOUR THEN THE ALPHA CHANNEL IS FIRST.
+			// display frame rate
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 60.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "FPS: %.1f", fps);
 
-		// Controller output.
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 105.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "XButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_CROSS ? "Yes" : "No");
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 120.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "SquareButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_SQUARE ? "Yes" : "No");
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 135.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "CircleButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_CIRCLE ? "Yes" : "No");
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 150.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "TriangleButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_TRIANGLE ? "Yes" : "No");
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 165.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "L1ButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_L1 ? "Yes" : "No");
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 180.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "L2ButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_L2 ? "Yes" : "No");
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 195.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "L3ButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_L3 ? "Yes" : "No");
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 210.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "R1ButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_R1 ? "Yes" : "No");
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 225.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "R2ButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_R2 ? "Yes" : "No");
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 240.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "R3ButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_R3 ? "Yes" : "No");
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 255.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "upDButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_UP ? "Yes" : "No");
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 270.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "downDButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_DOWN ? "Yes" : "No");
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 285.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "leftDButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_LEFT ? "Yes" : "No");
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 300.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "rightDButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_RIGHT ? "Yes" : "No");
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 315.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "shareButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_START ? "Yes" : "No");
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 330.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "optionsButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_SELECT ? "Yes" : "No");
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 345.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "leftStickX: %.1f", player->getSonyController()->left_stick_x_axis());
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 360.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "leftStickY: %.1f", player->getSonyController()->left_stick_y_axis());
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 375.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "rightStickX: %.1f", player->getSonyController()->right_stick_x_axis());
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 390.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "rightStickY: %.1f", player->getSonyController()->right_stick_y_axis());
-		//stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 405.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "rightStickAngle: %.1f", cam->getRightStickAngle());
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 420.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "leftStickAngle: %.1f", player->getLeftStickAngle());
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 435.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "Player Y-Pos: %.1f", player->getPlayerYPos());
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 450.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "Player grounded: %s", player->isOnGround() ? "True" : "False");
-		stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 465.0f, -0.9f), 0.5f, 0xffffffff, gef::TJ_LEFT, "Player Health: %i", player->getPlayerHealth());
+			// Controller output.
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 105.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "XButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_CROSS ? "Yes" : "No");
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 120.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "SquareButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_SQUARE ? "Yes" : "No");
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 135.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "CircleButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_CIRCLE ? "Yes" : "No");
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 150.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "TriangleButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_TRIANGLE ? "Yes" : "No");
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 165.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "L1ButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_L1 ? "Yes" : "No");
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 180.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "L2ButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_L2 ? "Yes" : "No");
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 195.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "L3ButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_L3 ? "Yes" : "No");
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 210.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "R1ButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_R1 ? "Yes" : "No");
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 225.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "R2ButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_R2 ? "Yes" : "No");
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 240.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "R3ButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_R3 ? "Yes" : "No");
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 255.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "upDButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_UP ? "Yes" : "No");
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 270.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "downDButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_DOWN ? "Yes" : "No");
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 285.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "leftDButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_LEFT ? "Yes" : "No");
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 300.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "rightDButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_RIGHT ? "Yes" : "No");
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 315.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "shareButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_START ? "Yes" : "No");
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 330.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "optionsButtonPressed: %s", player->getSonyController()->buttons_down() & gef_SONY_CTRL_SELECT ? "Yes" : "No");
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 345.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "leftStickX: %.1f", player->getSonyController()->left_stick_x_axis());
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 360.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "leftStickY: %.1f", player->getSonyController()->left_stick_y_axis());
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 375.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "rightStickX: %.1f", player->getSonyController()->right_stick_x_axis());
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 390.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "rightStickY: %.1f", player->getSonyController()->right_stick_y_axis());
+			//stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 405.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "rightStickAngle: %.1f", cam->getRightStickAngle());
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 420.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "leftStickAngle: %.1f", player->getLeftStickAngle());
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 435.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "Player Y-Pos: %.1f", player->getPlayerYPos());
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 450.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "Player grounded: %s", player->isOnGround() ? "True" : "False");
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 465.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "Player Health: %i", player->getPlayerHealth());
+		}
 	}
 }
 
@@ -285,12 +386,17 @@ void Level_1_State::SetupLights()
 	// set the ambient light
 	default_shader_data.set_ambient_light_colour(gef::Colour(0.25f, 0.25f, 0.25f, 1.0f));
 
-	// add a point light that is almost white, but with a blue tinge
-	// the position of the light is set far away so it acts light a directional light
+	//// add a point light that is almost white, but with a blue tinge
+	//// the position of the light is set far away so it acts light a directional light
 	gef::PointLight default_point_light;
+	//default_point_light.set_colour(gef::Colour(0.988f, 0.611f, 0.322f, 1.0f)); Sunset colour
 	default_point_light.set_colour(gef::Colour(0.7f, 0.7f, 1.0f, 1.0f));
 	default_point_light.set_position(gef::Vector4(-500.0f, 400.0f, 700.0f));
 	default_shader_data.AddPointLight(default_point_light);
+
+	/*playerLight.set_colour(gef::Colour(0.706f, 0.754f, 1.0f, 1.0f));
+	playerLight.set_position(gef::Vector4(player->getPosition()->x(), player->getPosition()->y() + 1, 0));
+	default_shader_data.AddPointLight(playerLight);*/
 }
 
 void Level_1_State::loadAsset(const char* assetFilePath)

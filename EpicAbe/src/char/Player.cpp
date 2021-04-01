@@ -392,7 +392,7 @@ void Player::move(char direction, float scale, float dt)
 	{
 		animationPlayer.set_clip(runAnimation);
 		animationPlayer.set_looping(true);
-		animationPlayer.set_playback_speed(1.0f);
+		animationPlayer.set_playback_speed(std::abs(scale));
 	}
 }
 

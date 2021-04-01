@@ -7,7 +7,7 @@ Enemy::Enemy(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation)
 	m_position = position;
 	m_scale = scale;
 	m_rotation = rotation;
-
+	speed = 0.9f;
 	m_startPos = position;			// Start position is saved in case we ever need to reset back to start pos.
 }
 
@@ -31,6 +31,31 @@ void Enemy::render(gef::Renderer3D* rend3D)
 	rend3D->DrawMesh(*this);
 }
 
+void Enemy::initEnemy(b2World* world, float xMeshSize, float yMeshSize, float randFriction)
+{
+	currentType = ObjectType::ENEMY;
+
+	// Set up box2d static body for env.
+	enemyBodyDef.type = b2_dynamicBody;
+	enemyBodyDef.position.Set(m_position.x(), m_position.y());
+	enemyBodyDef.userData.pointer = reinterpret_cast<uintptr_t>(this);
+	enemyBodyDef.fixedRotation = true;
+
+	// Create and attach the env body def.
+	enemyBody = world->CreateBody(&enemyBodyDef);
+
+	// Set up the env physics body shape.
+	enemyPolygonShape.SetAsBox(xMeshSize * 1.75f * m_scale.x(), yMeshSize * 0.14f * m_scale.y());
+
+	// create the fixture
+	enemyFixtureDef.shape = &enemyPolygonShape;
+	enemyFixtureDef.density = 1.0f;
+	enemyFixtureDef.friction = randFriction;
+
+	// create the fixture on the rigid body
+	enemyBody->CreateFixture(&enemyFixtureDef);
+}
+
 void Enemy::followPlayer(Player* player, float dt)
 {
 	/*gef::Vector4 playerPos = gef::Vector4(	player->getPlayerBody()->GetPosition().x,
@@ -52,17 +77,22 @@ void Enemy::followPlayer(Player* player, float dt)
 
 void Enemy::buildTransform()
 {
-	UpdateFromSimulation(enemyBody);
-}
+	//setup object rotation
+	rotZ.RotationZ(m_rotation.z());
+	rotY.RotationY(m_rotation.y());
 
-void Enemy::move(char direction, float scale, float dt)
-{
+	// setup the object translation
+	m_position = gef::Vector4(enemyBody->GetPosition().x, enemyBody->GetPosition().y, 0);
 
-}
+	// Set the scale
+	sca.Scale(m_scale);
 
-void Enemy::checkBounds()
-{
+	// build object transformation matrix
+	transform_ = rotY * rotZ * sca;
+	transform_.SetTranslation(m_position);
+	set_transform(transform_);
 
+	//UpdateFromSimulation(enemyBody);
 }
 
 gef::Vector4* Enemy::getPosition()
@@ -80,4 +110,9 @@ void Enemy::setRotation(gef::Vector4 newRot)
 	m_rotation.set_x(newRot.x());
 	m_rotation.set_y(newRot.y());
 	m_rotation.set_z(newRot.z());
+}
+
+void Enemy::setSpeed(float newSpeed)
+{
+	speed *= newSpeed;
 }
