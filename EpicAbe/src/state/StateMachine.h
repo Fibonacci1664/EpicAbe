@@ -8,7 +8,9 @@
 class SplashState;
 class MenuState;
 class GameState;
+class Level_1_Intro;
 class Level_1_State;
+class LevelComplete;
 class PauseState;
 class OptionsState;
 class HowToPlay;
@@ -42,7 +44,6 @@ public:
 	bool update(float dt);
 	void render();
 	
-
 	void setState(std::string newState);
 	GameState* getCurrentState();
 	gef::Platform& getPlatform();
@@ -56,7 +57,9 @@ public:
 
 	SplashState* splashState;
 	MenuState* mainMenuState;
+	Level_1_Intro* level_1_intro_state;
 	Level_1_State* level_1_state;
+	LevelComplete* levelComplete;
 	PauseState* pauseState;
 	OptionsState* optionsState;
 	HowToPlay* howToPlay;

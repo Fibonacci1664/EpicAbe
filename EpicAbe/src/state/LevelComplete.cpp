@@ -1,6 +1,6 @@
 #pragma once
+#include "LevelComplete.h"
 #include "../texture/load_texture.h"
-#include "MenuState.h"
 #include "StateMachine.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -12,17 +12,14 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 // CONSTRUCTOR / DESTRUCTOR
-MenuState::MenuState(StateMachine* sm)
+LevelComplete::LevelComplete(StateMachine* sm)
 {
 	stateMachine = sm;
+	stateTimer = 0;
 	stateGraphic = nullptr;
-	isStartGame = false;
-	isOptions = false;
-	isHowToPlay = false;
-	quitGame = false;
 }
 
-MenuState::~MenuState()
+LevelComplete::~LevelComplete()
 {
 
 }
@@ -30,8 +27,11 @@ MenuState::~MenuState()
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 // FUNCTIONS
-void MenuState::onEnter()
+void LevelComplete::onEnter()
 {
+	// Init stuff specific to the state.
+	stateTimer = 0.0f;
+
 	/*
 	 * Check is button icon nullptr, if it is then load texture,
 	 * if not then it's obv already been done, so don't do it again.
@@ -44,53 +44,25 @@ void MenuState::onEnter()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MenuState::onExit()
+void LevelComplete::onExit()
 {
-	isStartGame = false;
-	isOptions = false;
-	isHowToPlay = false;
-	quitGame = false;
+	stateTimer = 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MenuState::handleInput(float dt)
+void LevelComplete::handleInput(float dt)
 {
-	if (stateMachine->getSonyController()->buttons_released() & gef_SONY_CTRL_CROSS)
-	{
-		isStartGame = true;	
-	}
-	else if (stateMachine->getSonyController()->buttons_released() & gef_SONY_CTRL_TRIANGLE)
-	{
-		isOptions = true;
-	}
-	else if (stateMachine->getSonyController()->buttons_released() & gef_SONY_CTRL_SQUARE)
-	{
-		isHowToPlay = true;
-	}
-	else if (stateMachine->getSonyController()->buttons_released() & gef_SONY_CTRL_CIRCLE)
-	{
-		quitGame = true;
-	}
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool MenuState::update(float dt)
+bool LevelComplete::update(float dt)
 {
-	if (isStartGame)
-	{
-		stateMachine->setState("Level_1_Intro");
-	}
-	else if (isOptions)
-	{
-		stateMachine->setState("Options");
-	}
-	else if (isHowToPlay)
-	{
-		stateMachine->setState("HowToPlay");
-	}
-	else if (quitGame)
+	stateTimer += dt;
+
+	if (stateTimer >= 5.0f)
 	{
 		return true;
 	}
@@ -100,26 +72,25 @@ bool MenuState::update(float dt)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MenuState::render()
+void LevelComplete::render()
 {
 	stateMachine->getSpriteRenderer()->Begin();
 
-	// Render button icon
-	gef::Sprite mainMenu;
-	mainMenu.set_texture(stateGraphic);
-	mainMenu.set_position(stateMachine->getPlatform().width() * 0.5f, stateMachine->getPlatform().height() * 0.5f, -0.99f);
-	mainMenu.set_height(1125.0f);
-	mainMenu.set_width(2000.0f);
-	stateMachine->getSpriteRenderer()->DrawSprite(mainMenu);
+	gef::Sprite complete;
+	complete.set_texture(stateGraphic);
+	complete.set_position(stateMachine->getPlatform().width() * 0.5f, stateMachine->getPlatform().height() * 0.5f, -0.99f);
+	complete.set_height(1125.0f);
+	complete.set_width(2000.0f);
+	stateMachine->getSpriteRenderer()->DrawSprite(complete);
 
 	stateMachine->getSpriteRenderer()->End();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-gef::Texture* MenuState::initStateGraphic(gef::Platform& platform_)
+gef::Texture* LevelComplete::initStateGraphic(gef::Platform& platform_)
 {
-	stateGraphic = CreateTextureFromPNG("mainMenu.png", platform_);
+	stateGraphic = CreateTextureFromPNG("level_1_complete.png", platform_);
 
 	return stateGraphic;
 }

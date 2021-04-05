@@ -25,6 +25,7 @@ namespace gef
 
 class StateMachine;
 class Ground;
+class LevelEndDoor;
 class Background;
 class Foreground;
 class LargePillar;
@@ -62,6 +63,7 @@ private:
 	void initBackground();
 	void initForeground();
 	void initLargePillar();
+	void initLevelEndDoor();
 	void updateCamera();
 	void DrawHUD();
 	void SetupLights();
@@ -85,8 +87,11 @@ private:
 	// FOREGROUND STUFF
 	Foreground* foreground;
 
-	// LARGE PILLAR SCENE BLOCKERS
+	// LARGE PILLAR SCENE BLOCKER
 	LargePillar* largePillar;
+
+	// LEVEL END DOOR STUFF
+	LevelEndDoor* levelEndDoor;
 
 	// GROUND STUFF
 	Ground* ground;

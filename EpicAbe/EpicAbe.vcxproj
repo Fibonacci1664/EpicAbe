@@ -155,7 +155,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\env\Platform.cpp" />
+    <ClCompile Include="src\state\LevelComplete.cpp" />
+    <ClCompile Include="src\env\LevelEndDoor.cpp" />
+    <ClCompile Include="src\state\Level_1_Intro.cpp" />
     <ClCompile Include="src\env\LargePillar.cpp" />
     <ClCompile Include="src\env\Foreground.cpp" />
     <ClCompile Include="src\env\Ground.cpp" />
@@ -178,7 +180,9 @@
     <ClCompile Include="src\texture\load_texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\env\Platform.h" />
+    <ClInclude Include="src\state\LevelComplete.h" />
+    <ClInclude Include="src\env\LevelEndDoor.h" />
+    <ClInclude Include="src\state\Level_1_Intro.h" />
     <ClInclude Include="src\env\LargePillar.h" />
     <ClInclude Include="src\env\Foreground.h" />
     <ClInclude Include="src\env\Ground.h" />

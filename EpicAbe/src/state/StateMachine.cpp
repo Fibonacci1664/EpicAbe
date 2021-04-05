@@ -2,7 +2,9 @@
 #include "SplashState.h"
 #include "MenuState.h"
 #include "StateMachine.h"
+#include "Level_1_Intro.h"
 #include "Level_1_State.h"
+#include "LevelComplete.h"
 #include "PauseState.h"
 #include "OptionsState.h"
 #include "HowToPlay.h"
@@ -20,6 +22,8 @@ StateMachine::StateMachine(gef::Platform& platform_) : platform(platform_)
 {
 	howToPlay = nullptr;
 	level_1_state = nullptr;
+	level_1_intro_state = nullptr;
+	levelComplete = nullptr;
 	mainMenuState = nullptr;
 	optionsState = nullptr;
 	pauseState = nullptr;
@@ -44,6 +48,12 @@ StateMachine::~StateMachine()
 
 	delete level_1_state;
 	level_1_state = nullptr;
+
+	delete level_1_intro_state;
+	level_1_intro_state = nullptr;
+
+	delete levelComplete;
+	levelComplete = nullptr;
 
 	delete pauseState;
 	pauseState = nullptr;
@@ -79,6 +89,20 @@ void StateMachine::handleInput(float dt)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
+bool StateMachine::update(float dt)
+{
+	return currentState->update(dt);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void StateMachine::render()
+{
+	currentState->render();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void StateMachine::init(gef::Platform& platform_, gef::SpriteRenderer* spRend, gef::Renderer3D* rend3D, gef::Font* font_, b2World* world)
 {
 	sprRend = spRend;
@@ -98,25 +122,13 @@ void StateMachine::initInputControl(gef::InputManager* im, const gef::SonyContro
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool StateMachine::update(float dt)
-{
-	return currentState->update(dt);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
-void StateMachine::render()
-{
-	currentState->render();
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
 void StateMachine::initStates()
 {
 	splashState = new SplashState(this);
 	mainMenuState = new MenuState(this);
+	level_1_intro_state = new Level_1_Intro(this);
 	level_1_state = new Level_1_State(this);
+	levelComplete = new LevelComplete(this);
 	pauseState = new PauseState(this);
 	optionsState = new OptionsState(this);
 	howToPlay = new HowToPlay(this);
@@ -132,7 +144,9 @@ void StateMachine::initStateMap()
 {
 	states.insert(std::make_pair("Splash", splashState));
 	states.insert(std::make_pair("MainMenu", mainMenuState));
+	states.insert(std::make_pair("Level_1_Intro", level_1_intro_state));
 	states.insert(std::make_pair("Level_1", level_1_state));
+	states.insert(std::make_pair("LevelComplete", levelComplete));
 	states.insert(std::make_pair("PauseMenu", pauseState));
 	states.insert(std::make_pair("Options", optionsState));
 	states.insert(std::make_pair("HowToPlay", howToPlay));

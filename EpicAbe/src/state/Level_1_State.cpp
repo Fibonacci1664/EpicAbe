@@ -5,6 +5,7 @@
 #include "../char/Enemy.h"
 #include "../env/Dunes.h"
 #include "../env/Ground.h"
+#include "../env/LevelEndDoor.h"
 #include "../env/Background.h"
 #include "../env/Foreground.h"
 #include "../env/LargePillar.h"
@@ -52,6 +53,9 @@ Level_1_State::~Level_1_State()
 	delete largePillar;
 	largePillar = nullptr;
 
+	delete levelEndDoor;
+	levelEndDoor = nullptr;
+
 	delete ground;
 	ground = nullptr;
 
@@ -75,6 +79,7 @@ void Level_1_State::initLevel()
 	initBackground();
 	initForeground();
 	initLargePillar();
+	initLevelEndDoor();
 	initGround();
 	initPlayer();
 	initEnemy();
@@ -127,6 +132,12 @@ bool Level_1_State::update(float dt)
 		return false;
 	}
 
+	if (player->getPlayerBody()->GetPosition().x > 98)
+	{
+		stateMachine->setState("LevelComplete");
+		return false;
+	}
+
 	fps = 1.0f / dt;
 
 	updateCamera();
@@ -164,6 +175,7 @@ void Level_1_State::render()
 	background->render(stateMachine->get3DRenderer());
 	foreground->render(stateMachine->get3DRenderer());
 	largePillar->render(stateMachine->get3DRenderer());
+	levelEndDoor->render(stateMachine->get3DRenderer());
 	ground->render(stateMachine->get3DRenderer());
 	stateMachine->getSpriteRenderer()->End();
 
@@ -276,6 +288,27 @@ void Level_1_State::initLargePillar()
 	else
 	{
 		gef::DebugOut("Large Pillar model failed to load\n");
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Level_1_State::initLevelEndDoor()
+{
+	loadAsset("levelEndDoor.scn");
+
+	gef::Mesh* levelEndDoorMesh = GetMeshFromSceneAssets(scene_assets_);
+
+	levelEndDoor = new LevelEndDoor(gef::Vector4(95, 0, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 1.5707f, 0));
+	levelEndDoor->initLevelEndDoor();
+
+	if (scene_assets_)
+	{
+		levelEndDoor->set_mesh(levelEndDoorMesh);
+	}
+	else
+	{
+		gef::DebugOut("Level end door model failed to load\n");
 	}
 }
 

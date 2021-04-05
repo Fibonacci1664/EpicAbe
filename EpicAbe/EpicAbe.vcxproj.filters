@@ -75,7 +75,13 @@
     <ClCompile Include="src\env\LargePillar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\env\Platform.cpp">
+    <ClCompile Include="src\state\Level_1_Intro.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\env\LevelEndDoor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\state\LevelComplete.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -137,7 +143,13 @@
     <ClInclude Include="src\env\LargePillar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\env\Platform.h">
+    <ClInclude Include="src\state\Level_1_Intro.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\env\LevelEndDoor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\state\LevelComplete.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

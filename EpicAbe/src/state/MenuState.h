@@ -33,5 +33,6 @@ private:
 	bool isStartGame;
 	bool isOptions;
 	bool isHowToPlay;
+	bool quitGame;
 };
 

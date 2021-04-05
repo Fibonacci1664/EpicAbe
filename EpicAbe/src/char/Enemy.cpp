@@ -77,6 +77,19 @@ void Enemy::move(float dt)
 	if (enemyBody->GetPosition().x > (m_startPos.x() + 1) || enemyBody->GetPosition().x < (m_startPos.x() - 1))
 	{
 		force = -force;
+
+		// After we have started applying an opposite force and once vel == 0, flip model
+		if (enemyBody->GetLinearVelocity().x < 0.05)
+		{
+			setRotation(gef::Vector4(0, 0, 3.1415 * 1.5f));
+		}
+	}
+	else
+	{
+		if (enemyBody->GetLinearVelocity().x > -0.05)
+		{
+			setRotation(gef::Vector4(0, 0, 3.1415 * 0.5f));
+		}
 	}
 
 	enemyBody->ApplyForceToCenter(b2Vec2(force * speed * dt, 0), true);
