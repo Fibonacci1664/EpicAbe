@@ -5,6 +5,7 @@
 
 #include <system/application.h>
 #include <box2d/box2d.h>
+#include <gef.h>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,6 +19,8 @@ namespace gef
 	class InputManager;
 	class SonyController;
 	class SonyControllerInputManager;
+	class AudioManager;
+	class VolumeInfo;
 }
 
 class b2World;
@@ -40,6 +43,7 @@ private:
 	void initInputManager();
 	void initWorld();
 	void initStateMachine();
+	void initAudio();
 
 	// REND STUFF
 	gef::SpriteRenderer* sprite_renderer_;
@@ -60,6 +64,13 @@ private:
 
 	// STATE MACHINE STUFF
 	StateMachine* stateMachine;
+
+	// AUDIO STUFF
+	gef::AudioManager* audioManager;
+	//Int32 sampleSound;
+	Int32 sampleMusic;
+	gef::VolumeInfo* volumeInfoControl;
+	float musicVolume;
 
 	float fps_;
 	bool quitGame;

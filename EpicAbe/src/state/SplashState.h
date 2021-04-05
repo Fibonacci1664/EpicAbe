@@ -19,6 +19,7 @@ public:
 	SplashState(StateMachine* sm);
 	~SplashState() override;
 
+	
 	void onEnter() override;
 	void onExit() override;
 	void handleInput(float dt) override;
@@ -31,10 +32,6 @@ private:
 	StateMachine* stateMachine;
 
 	gef::Texture* initStateGraphic(gef::Platform& platform_);
-
-	/*gef::Texture* initSplashLogo(gef::Platform& platform_);
-	gef::Texture* splashLogo;*/
-
 	float stateTimer;
 };
 

@@ -12,6 +12,7 @@
 #include <graphics/renderer_3d.h>
 #include <maths/math_utils.h>
 #include <graphics/mesh.h>
+#include <audio/audio_manager.h>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -31,6 +32,12 @@ Game::Game(gef::Platform& platform) :
 	stateMachine(nullptr),
 	quitGame(false)
 {
+
+	audioManager = nullptr;
+	sampleMusic = 0;
+	//sampleSound = 0;
+	volumeInfoControl = nullptr;
+	musicVolume = 1.0f;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,6 +54,7 @@ void Game::Init()
 	initWorld();
 	initInputManager();
 	initStateMachine();
+	initAudio();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,6 +69,9 @@ void Game::CleanUp()
 
 	delete stateMachine;
 	stateMachine = nullptr;
+
+	delete volumeInfoControl;
+	volumeInfoControl = nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -138,6 +149,22 @@ void Game::initStateMachine()
 	stateMachine->init(platform_, sprite_renderer_, renderer_3d_, font_, world_);
 	stateMachine->initInputControl(im, controller, scim);
 	stateMachine->initStates();	
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Game::initAudio()
+{
+	// initialise audio manager
+	audioManager = gef::AudioManager::Create();
+	//sampleSound = audioManager->LoadSample("../media/box_collected.wav", stateMachine->getPlatform());
+	sampleMusic = audioManager->LoadMusic("desertLoop.wav", stateMachine->getPlatform());
+
+	volumeInfoControl = new gef::VolumeInfo();
+	volumeInfoControl->volume = 50;
+	audioManager->SetMusicVolumeInfo(*volumeInfoControl);
+
+	audioManager->PlayMusic();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

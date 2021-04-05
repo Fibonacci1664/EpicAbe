@@ -52,6 +52,15 @@ void OptionsState::handleInput(float dt)
 	{
 		moveToMainMenu = true;
 	}
+
+	if (stateMachine->getSonyController()->buttons_released() & gef_SONY_CTRL_L1)
+	{
+		// turn music down
+	}
+	else if (stateMachine->getSonyController()->buttons_released() & gef_SONY_CTRL_R1)
+	{
+		// turn music up
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
