@@ -1,9 +1,12 @@
 #include "Enemy.h"
-
 #include "../char/Player.h"
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// CONSTRUCTOR / DESTRUCTOR
 Enemy::Enemy(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation)
 {
+	enemyBody = nullptr;
 	m_position = position;
 	m_scale = scale;
 	m_rotation = rotation;
@@ -16,20 +19,29 @@ Enemy::~Enemy()
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// FUNCTIONS
 void Enemy::handleInput(float dt)
 {
 
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Enemy::update(float dt)
 {
 	buildTransform();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Enemy::render(gef::Renderer3D* rend3D)
 {
 	rend3D->DrawMesh(*this);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Enemy::initEnemy(b2World* world, float xMeshSize, float yMeshSize)
 {
@@ -56,6 +68,8 @@ void Enemy::initEnemy(b2World* world, float xMeshSize, float yMeshSize)
 	enemyBody->CreateFixture(&enemyFixtureDef);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Enemy::move(float dt)
 {
 	float force = 2.0f;
@@ -68,24 +82,7 @@ void Enemy::move(float dt)
 	enemyBody->ApplyForceToCenter(b2Vec2(force * speed * dt, 0), true);
 }
 
-void Enemy::followPlayer(Player* player, float dt)
-{
-	/*gef::Vector4 playerPos = gef::Vector4(	player->getPlayerBody()->GetPosition().x,
-											player->getPlayerBody()->GetPosition().y, 1.0f);*/
-
-
-
-	//m_position.Lerp(gef::Vector4(enemyBody->GetPosition().x, enemyBody->GetPosition().y, 1.0f), playerPos, 1.0f * dt);
-
-	float playerDirectionX = player->getPlayerBody()->GetPosition().x - enemyBody->GetPosition().x;
-
-	// This says WHERE we want to LERP from and to, and over what time period.
-	//m_position.Lerp(m_position, *player->getPosition(), dt);
-
-	// This says how much force should be applied in the direction of the LERP.
-	enemyBody->ApplyLinearImpulseToCenter(b2Vec2(playerDirectionX * speed * dt, 0), true);
-	//m_rotation.set_y(-player->getLeftStickAngle() * dt);
-}
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Enemy::buildTransform()
 {
@@ -107,15 +104,22 @@ void Enemy::buildTransform()
 	//UpdateFromSimulation(enemyBody);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// GETTTERS / SETTERS
 gef::Vector4* Enemy::getPosition()
 {
 	return &m_position;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Enemy::setPosition(gef::Vector4* newPosition)
 {
 	m_position = *newPosition;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Enemy::setRotation(gef::Vector4 newRot)
 {
@@ -124,12 +128,18 @@ void Enemy::setRotation(gef::Vector4 newRot)
 	m_rotation.set_z(newRot.z());
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Enemy::setSpeed(float newSpeed)
 {
 	speed *= newSpeed;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Enemy::setStartLocation(float startLoc)
 {
 	m_startPos.set_x(startLoc);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////

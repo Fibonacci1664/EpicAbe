@@ -1,6 +1,8 @@
 #pragma once
 #include "../object/game_object.h"
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #include <graphics/renderer_3d.h>
 #include <graphics/mesh_instance.h>
 #include <input/sony_controller_input_manager.h>
@@ -8,8 +10,12 @@
 #include <cmath>
 #include <maths/math_utils.h>
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 // FORWARD DECS
 class Player;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 class Enemy : public GameObject
 {
@@ -23,7 +29,6 @@ public:
 
 	void initEnemy(b2World* world, float xMeshSize, float yMeshSize);
 	void move(float dt);
-	void followPlayer(Player* player, float dt);
 	void buildTransform();
 
 	gef::Vector4* getPosition();
@@ -48,3 +53,5 @@ private:
 	b2PolygonShape enemyPolygonShape;
 	b2FixtureDef enemyFixtureDef;
 };
+
+/////////////////////////////////////////////////////////////////////////////////////////////////

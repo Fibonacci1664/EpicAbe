@@ -1,6 +1,4 @@
-#include <graphics/sprite_renderer.h>
-#include <graphics/font.h>
-
+#pragma once
 #include "SplashState.h"
 #include "MenuState.h"
 #include "StateMachine.h"
@@ -10,8 +8,22 @@
 #include "HowToPlay.h"
 #include "system/platform.h"
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+#include <graphics/sprite_renderer.h>
+#include <graphics/font.h>
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// CONSTRUCTOR / DESTRUCTOR
 StateMachine::StateMachine(gef::Platform& platform_) : platform(platform_)
 {
+	howToPlay = nullptr;
+	level_1_state = nullptr;
+	mainMenuState = nullptr;
+	optionsState = nullptr;
+	pauseState = nullptr;
+	splashState = nullptr;
 	currentState = nullptr;
 	sprRend = nullptr;
 	renderer3D = nullptr;
@@ -24,23 +36,48 @@ StateMachine::StateMachine(gef::Platform& platform_) : platform(platform_)
 
 StateMachine::~StateMachine()
 {
+	delete splashState;
+	splashState = nullptr;
 
+	delete mainMenuState;
+	mainMenuState = nullptr;
+
+	delete level_1_state;
+	level_1_state = nullptr;
+
+	delete pauseState;
+	pauseState = nullptr;
+
+	delete optionsState;
+	optionsState = nullptr;
+
+	delete howToPlay;
+	howToPlay = nullptr;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// FUNCTIONS
 void StateMachine::onEnter()
 {
 	currentState->onEnter();
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void StateMachine::onExit()
 {
 	currentState->onExit();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void StateMachine::handleInput(float dt)
 {
 	currentState->handleInput(dt);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void StateMachine::init(gef::Platform& platform_, gef::SpriteRenderer* spRend, gef::Renderer3D* rend3D, gef::Font* font_, b2World* world)
 {
@@ -50,6 +87,8 @@ void StateMachine::init(gef::Platform& platform_, gef::SpriteRenderer* spRend, g
 	theWorld = world;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void StateMachine::initInputControl(gef::InputManager* im, const gef::SonyController* sc, gef::SonyControllerInputManager* scim)
 {
 	input_manager_ = im;
@@ -57,15 +96,21 @@ void StateMachine::initInputControl(gef::InputManager* im, const gef::SonyContro
 	scim_ = scim;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 bool StateMachine::update(float dt)
 {
 	return currentState->update(dt);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void StateMachine::render()
 {
 	currentState->render();
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void StateMachine::initStates()
 {
@@ -81,6 +126,8 @@ void StateMachine::initStates()
 	onEnter();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void StateMachine::initStateMap()
 {
 	states.insert(std::make_pair("Splash", splashState));
@@ -91,6 +138,9 @@ void StateMachine::initStateMap()
 	states.insert(std::make_pair("HowToPlay", howToPlay));
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// GETTERS / SETTERS
 void StateMachine::setState(std::string newState)
 {
 	onExit();
@@ -98,47 +148,67 @@ void StateMachine::setState(std::string newState)
 	onEnter();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 GameState* StateMachine::getCurrentState()
 {
 	return currentState;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 gef::Platform& StateMachine::getPlatform()
 {
 	return platform;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 gef::SpriteRenderer* StateMachine::getSpriteRenderer()
 {
 	return sprRend;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 gef::Font* StateMachine::getFont()
 {
 	return font;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 gef::InputManager* StateMachine::getInputManagaer()
 {
 	return input_manager_;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 const gef::SonyController* StateMachine::getSonyController()
 {
 	return sc_;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 gef::SonyControllerInputManager* StateMachine::getSonyControllerIM()
 {
 	return scim_;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 b2World* StateMachine::getPhysicsWorld()
 {
 	return theWorld;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 gef::Renderer3D* StateMachine::get3DRenderer()
 {
 	return renderer3D;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////

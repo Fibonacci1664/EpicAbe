@@ -1,12 +1,17 @@
-#include <graphics/sprite_renderer.h>
-#include <graphics/sprite.h>
-#include <input/sony_controller_input_manager.h>
-
+#pragma once
 #include "OptionsState.h"
 #include "StateMachine.h"
 #include "../texture/load_texture.h"
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include <graphics/sprite_renderer.h>
+#include <graphics/sprite.h>
+#include <input/sony_controller_input_manager.h>
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// CONSTRUCTOR / DESTRUCTOR
 OptionsState::OptionsState(StateMachine* sm)
 {
 	stateMachine = sm;
@@ -21,6 +26,9 @@ OptionsState::~OptionsState()
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// FUNCTIONS
 void OptionsState::onEnter()
 {
 	if(stateGraphic == nullptr)
@@ -29,10 +37,14 @@ void OptionsState::onEnter()
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void OptionsState::onExit()
 {
 	moveToMainMenu = false;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void OptionsState::handleInput(float dt)
 {
@@ -41,6 +53,8 @@ void OptionsState::handleInput(float dt)
 		moveToMainMenu = true;
 	}
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool OptionsState::update(float dt)
 {
@@ -51,6 +65,8 @@ bool OptionsState::update(float dt)
 
 	return false;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void OptionsState::render()
 {
@@ -67,9 +83,13 @@ void OptionsState::render()
 	stateMachine->getSpriteRenderer()->End();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 gef::Texture* OptionsState::initStateGraphic(gef::Platform& platform_)
 {
 	stateGraphic = CreateTextureFromPNG("optionsMenu.png", platform_);
 
 	return stateGraphic;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////

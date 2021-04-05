@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\env\Platform.cpp" />
     <ClCompile Include="src\env\LargePillar.cpp" />
     <ClCompile Include="src\env\Foreground.cpp" />
     <ClCompile Include="src\env\Ground.cpp" />
@@ -177,6 +178,7 @@
     <ClCompile Include="src\texture\load_texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\env\Platform.h" />
     <ClInclude Include="src\env\LargePillar.h" />
     <ClInclude Include="src\env\Foreground.h" />
     <ClInclude Include="src\env\Ground.h" />

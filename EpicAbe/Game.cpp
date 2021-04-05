@@ -1,6 +1,9 @@
+#pragma once
 #include "Game.h"
 #include "src/char/Player.h"
 #include "src/state/StateMachine.h"
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include <system/platform.h>
 #include <graphics/sprite_renderer.h>
@@ -10,13 +13,29 @@
 #include <maths/math_utils.h>
 #include <graphics/mesh.h>
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// CONSTRUCTOR
 Game::Game(gef::Platform& platform) :
 	Application(platform),
+	font_(nullptr),
 	world_(NULL),
+	controller(nullptr),
+	im(nullptr),
+	scim(nullptr),
+	fps_(0),
+	positionIterations(0),
+	velocityIterations(0),
+	renderer_3d_(nullptr),
+	sprite_renderer_(nullptr),
+	stateMachine(nullptr),
 	quitGame(false)
 {
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// FUNCTIONS
 void Game::Init()
 {
 	sprite_renderer_ = gef::SpriteRenderer::Create(platform_);
@@ -30,8 +49,13 @@ void Game::Init()
 	initStateMachine();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Game::CleanUp()
 {
+	delete font_;
+	font_ = nullptr;
+
 	delete world_;
 	world_ = nullptr;
 
@@ -39,10 +63,14 @@ void Game::CleanUp()
 	stateMachine = nullptr;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Game::handleInput(float dt)
 {
 	stateMachine->handleInput(dt);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool Game::Update(float frame_time)
 {
@@ -67,10 +95,14 @@ bool Game::Update(float frame_time)
 	return true;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Game::Render()
 {
 	stateMachine->render();
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Game::initFont()
 {
@@ -78,12 +110,16 @@ void Game::initFont()
 	font_->Load("comic_sans");
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Game::initInputManager()
 {
 	im = gef::InputManager::Create(platform_);
 	scim = im->controller_input();
 	controller = scim->GetController(0);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Game::initWorld()
 {
@@ -94,6 +130,8 @@ void Game::initWorld()
 	world_ = new b2World(gravity);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Game::initStateMachine()
 {
 	stateMachine = new StateMachine(platform_);
@@ -101,3 +139,5 @@ void Game::initStateMachine()
 	stateMachine->initInputControl(im, controller, scim);
 	stateMachine->initStates();	
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////

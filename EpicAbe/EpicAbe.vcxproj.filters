@@ -75,6 +75,9 @@
     <ClCompile Include="src\env\LargePillar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\env\Platform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Anim\motion_clip_player.h">
@@ -132,6 +135,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\env\LargePillar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\env\Platform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

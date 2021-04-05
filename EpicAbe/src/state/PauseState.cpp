@@ -1,11 +1,17 @@
-#include <graphics/sprite_renderer.h>
-#include <graphics/sprite.h>
-#include <input/sony_controller_input_manager.h>
-
+#pragma once
 #include "PauseState.h"
 #include "StateMachine.h"
 #include "../texture/load_texture.h"
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+#include <graphics/sprite_renderer.h>
+#include <graphics/sprite.h>
+#include <input/sony_controller_input_manager.h>
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// CONSTRUCTOR / DESTRUCTOR
 PauseState::PauseState(StateMachine* sm)
 {
 	stateMachine = sm;
@@ -21,6 +27,9 @@ PauseState::~PauseState()
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// FUNCTIONS
 void PauseState::onEnter()
 {
 	if (stateGraphic == nullptr)
@@ -29,6 +38,8 @@ void PauseState::onEnter()
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void PauseState::onExit()
 {
 	stateTimer = 0;
@@ -36,6 +47,8 @@ void PauseState::onExit()
 	gotoMainMenu = false;
 	gotoOptions = false;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void PauseState::handleInput(float dt)
 {
@@ -52,6 +65,8 @@ void PauseState::handleInput(float dt)
 		gotoOptions = true;
 	}
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool PauseState::update(float dt)
 {
@@ -73,6 +88,8 @@ bool PauseState::update(float dt)
 	return false;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void PauseState::render()
 {
 	stateMachine->getSpriteRenderer()->Begin();
@@ -87,9 +104,13 @@ void PauseState::render()
 	stateMachine->getSpriteRenderer()->End();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 gef::Texture* PauseState::initStateGraphic(gef::Platform& platform_)
 {
 	stateGraphic = CreateTextureFromPNG("pauseMenu.png", platform_);
 
 	return stateGraphic;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////

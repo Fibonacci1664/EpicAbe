@@ -1,11 +1,14 @@
 #include "LargePillar.h"
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// CONSTRUCTOR / DESTRUCTOR
 LargePillar::LargePillar(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation)
 {
 	m_position = position;
 	m_scale = scale;
 	m_rotation = rotation;
-
+	envBody = nullptr;
 	buildTransform();
 }
 
@@ -14,15 +17,22 @@ LargePillar::~LargePillar()
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// FUNCTIONS
 void LargePillar::update(float dt)
 {
 	//buildTransform();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void LargePillar::render(gef::Renderer3D* rend3D)
 {
 	rend3D->DrawMesh(*this);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void LargePillar::initLargePillar(b2World* world, float xMeshSize, float yMeshSize)
 {
@@ -47,6 +57,8 @@ void LargePillar::initLargePillar(b2World* world, float xMeshSize, float yMeshSi
 	envBody->CreateFixture(&envFixDef);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void LargePillar::buildTransform()
 {
 	//setup object rotation
@@ -66,3 +78,5 @@ void LargePillar::buildTransform()
 
 	//UpdateFromSimulation(envBody);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////

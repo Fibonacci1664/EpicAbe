@@ -1,6 +1,8 @@
 #pragma once
 #include "GameState.h"
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #include <system/application.h>
 #include <maths/vector2.h>
 #include <box2d/box2d.h>
@@ -8,10 +10,9 @@
 #include <maths/matrix44.h>
 #include <../gef_abertay/graphics/point_light.h>
 
-const int WIDTH = 2;
-const int DEPTH = 1;
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
-// FRAMEWORK FORWARD DECLARATIONS
+// FORWARD DECS
 namespace gef
 {
 	class Scene;
@@ -30,6 +31,12 @@ class LargePillar;
 class Dunes;
 class Player;
 class Enemy;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// GLOBALS
+const int WIDTH = 2;
+const int DEPTH = 1;
 
 class Level_1_State : public GameState
 {
@@ -54,7 +61,7 @@ private:
 	void initDunes();
 	void initBackground();
 	void initForeground();
-	void initLargePillars();
+	void initLargePillar();
 	void updateCamera();
 	void DrawHUD();
 	void SetupLights();
@@ -69,8 +76,8 @@ private:
 	gef::Matrix44 projection_matrix;
 	gef::Matrix44 view_matrix;
 
-	// GROUND STUFF
-	Ground* ground;
+	// DUNES STUFF
+	Dunes* dunes;
 
 	// BACKGROUND STUFF
 	Background* background;
@@ -79,10 +86,10 @@ private:
 	Foreground* foreground;
 
 	// LARGE PILLAR SCENE BLOCKERS
-	std::vector<LargePillar*> largePillars;
+	LargePillar* largePillar;
 
-	// DUNES STUFF
-	Dunes* dunes;
+	// GROUND STUFF
+	Ground* ground;
 
 	// PLAYER STUFF
 	Player* player;
@@ -104,3 +111,5 @@ private:
 	bool quitGame;
 	bool isDebug;
 };
+
+/////////////////////////////////////////////////////////////////////////////////////////////////

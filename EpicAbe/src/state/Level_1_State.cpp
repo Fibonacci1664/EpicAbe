@@ -1,12 +1,4 @@
-#include <graphics/renderer_3d.h>
-#include <graphics/sprite_renderer.h>
-#include <graphics/font.h>
-#include <input/sony_controller_input_manager.h>
-#include <maths/math_utils.h>
-#include <graphics/mesh.h>
-#include <system/debug_log.h>
-#include <graphics/colour.cpp>
-
+#pragma once
 #include "Level_1_State.h"
 #include "StateMachine.h"
 #include "../char/Player.h"
@@ -18,7 +10,20 @@
 #include "../env/LargePillar.h"
 #include "../texture/load_texture.h"
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include <graphics/renderer_3d.h>
+#include <graphics/sprite_renderer.h>
+#include <graphics/font.h>
+#include <input/sony_controller_input_manager.h>
+#include <maths/math_utils.h>
+#include <graphics/mesh.h>
+#include <system/debug_log.h>
+#include <graphics/colour.cpp>
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// CONSTRUCTOR / DESTRUCTOR
 Level_1_State::Level_1_State(StateMachine* sm)
 {
 	stateMachine = sm;
@@ -35,32 +40,63 @@ Level_1_State::Level_1_State(StateMachine* sm)
 
 Level_1_State::~Level_1_State()
 {
-	
+	delete dunes;
+	dunes = nullptr;
+
+	delete background;
+	background = nullptr;
+
+	delete foreground;
+	foreground = nullptr;
+
+	delete largePillar;
+	largePillar = nullptr;
+
+	delete ground;
+	ground = nullptr;
+
+	delete player;
+	player = nullptr;
+
+	for (int i = 0; i < enemies.size(); ++i)
+	{
+		delete enemies[i];
+		enemies[i] = nullptr;
+	}
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// FUNCTIONS
 void Level_1_State::initLevel()
 {
 	initCamera();	
 	initDunes();
 	initBackground();
 	initForeground();
-	initLargePillars();
+	initLargePillar();
 	initGround();
 	initPlayer();
 	initEnemy();
 	SetupLights();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Level_1_State::onEnter()
 {
 	
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Level_1_State::onExit()
 {
 	stateTimer = 0;
 	isPaused = false;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Level_1_State::handleInput(float dt)
 {
@@ -72,12 +108,11 @@ void Level_1_State::handleInput(float dt)
 	player->handleInput(dt);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 bool Level_1_State::update(float dt)
 {
 	//stateTimer += dt;
-
-	// THIS NEEDS TO BE THE FIRST THING DONE IN UPDATE!
-	//handleInput(dt);
 
 	totalTimeElapsed += dt;
 
@@ -101,11 +136,7 @@ bool Level_1_State::update(float dt)
 
 	player->update(dt, stateMachine->getPhysicsWorld());
 	ground->update(dt);
-
-	for (int i = 0; i < 2; ++i)
-	{
-		largePillars[i]->update(dt);
-	}
+	largePillar->update(dt);
 
 	for (int i = 0; i < enemies.size(); ++i)
 	{
@@ -115,6 +146,8 @@ bool Level_1_State::update(float dt)
 
 	return false;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Level_1_State::render()
 {
@@ -130,19 +163,17 @@ void Level_1_State::render()
 	dunes->render(stateMachine->get3DRenderer());
 	background->render(stateMachine->get3DRenderer());
 	foreground->render(stateMachine->get3DRenderer());
+	largePillar->render(stateMachine->get3DRenderer());
 	ground->render(stateMachine->get3DRenderer());
 	stateMachine->getSpriteRenderer()->End();
-
-	for (int i = 0; i < 2; ++i)
-	{
-		largePillars[i]->render(stateMachine->get3DRenderer());
-	}
 
 	// start drawing sprites, but don't clear the frame buffer
 	stateMachine->getSpriteRenderer()->Begin(false);
 	DrawHUD();
 	stateMachine->getSpriteRenderer()->End();
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Level_1_State::initCamera()
 {
@@ -161,6 +192,119 @@ void Level_1_State::initCamera()
 	stateMachine->get3DRenderer()->set_view_matrix(view_matrix);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Level_1_State::initDunes()
+{
+	loadAsset("env/dunesCol.scn");
+
+	gef::Mesh* dunesMesh = GetMeshFromSceneAssets(scene_assets_);
+
+	dunes = new Dunes(gef::Vector4(15, 0, -2.3f), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+	dunes->initDunes();
+
+	if (scene_assets_)
+	{
+		dunes->set_mesh(dunesMesh);
+	}
+	else
+	{
+		gef::DebugOut("Dunes model failed to load\n");
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Level_1_State::initBackground()
+{
+	loadAsset("background.scn");
+
+	gef::Mesh* backgroundMesh = GetMeshFromSceneAssets(scene_assets_);
+
+	background = new Background(gef::Vector4(18.5f, 0, -1.9f), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+	background->initBackground();
+
+	if (scene_assets_)
+	{
+		background->set_mesh(backgroundMesh);
+	}
+	else
+	{
+		gef::DebugOut("Background model failed to load\n");
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Level_1_State::initForeground()
+{
+	loadAsset("foreground.scn");
+
+	gef::Mesh* foregroundMesh = GetMeshFromSceneAssets(scene_assets_);
+
+	foreground = new Foreground(gef::Vector4(21, -1, 2.9f), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+	foreground->initForeground();
+
+	if (scene_assets_)
+	{
+		foreground->set_mesh(foregroundMesh);
+	}
+	else
+	{
+		gef::DebugOut("Foreground model failed to load\n");
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Level_1_State::initLargePillar()
+{
+	loadAsset("largePillar.scn");
+
+	gef::Mesh* largePillarMesh = GetMeshFromSceneAssets(scene_assets_);
+
+	float xSize = largePillarMesh->aabb().max_vtx().x() - largePillarMesh->aabb().min_vtx().x();
+	float ySize = largePillarMesh->aabb().max_vtx().y() - largePillarMesh->aabb().min_vtx().y();
+
+	largePillar = new LargePillar(gef::Vector4(35, 0, 0.5), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+	largePillar->initLargePillar(stateMachine->getPhysicsWorld(), xSize, ySize);
+
+	if (scene_assets_)
+	{
+		largePillar->set_mesh(largePillarMesh);
+	}
+	else
+	{
+		gef::DebugOut("Large Pillar model failed to load\n");
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Level_1_State::initGround()
+{
+	loadAsset("ground.scn");
+
+	gef::Mesh* groundMesh = GetMeshFromSceneAssets(scene_assets_);
+
+	float xSize = groundMesh->aabb().max_vtx().x() - groundMesh->aabb().min_vtx().x();
+	float ySize = groundMesh->aabb().max_vtx().y() - groundMesh->aabb().min_vtx().y();
+
+	ground = new Ground(gef::Vector4(63.5, 0.001f, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+	ground->initGround(stateMachine->getPhysicsWorld(), xSize, ySize);
+
+	if (scene_assets_)
+	{
+		ground->set_mesh(groundMesh);
+	}
+	else
+	{
+		gef::DebugOut("Ground model failed to load\n");
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Level_1_State::initPlayer()
 {
 	player = new Player(gef::Vector4(40, 5, 0), gef::Vector4(0.005f, 0.005f, 0.005f), gef::Vector4(0, 0, 0));
@@ -171,6 +315,8 @@ void Level_1_State::initPlayer()
 	player->initModelPlayer();
 	player->initPhysicsBody(stateMachine->getPhysicsWorld());
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Level_1_State::initEnemy()
 {
@@ -218,111 +364,30 @@ void Level_1_State::initEnemy()
 	}
 }
 
-void Level_1_State::initGround()
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Level_1_State::SetupLights()
 {
-	loadAsset("ground.scn");
+	// grab the data for the default shader used for rendering 3D geometry
+	gef::Default3DShaderData& default_shader_data = stateMachine->get3DRenderer()->default_shader_data();
 
-	gef::Mesh* groundMesh = GetMeshFromSceneAssets(scene_assets_);
+	// set the ambient light
+	default_shader_data.set_ambient_light_colour(gef::Colour(0.25f, 0.25f, 0.25f, 1.0f));
 
-	float xSize = groundMesh->aabb().max_vtx().x() - groundMesh->aabb().min_vtx().x();
-	float ySize = groundMesh->aabb().max_vtx().y() - groundMesh->aabb().min_vtx().y();
+	//// add a point light that is almost white, but with a blue tinge
+	//// the position of the light is set far away so it acts light a directional light
+	gef::PointLight default_point_light;
+	//default_point_light.set_colour(gef::Colour(0.988f, 0.611f, 0.322f, 1.0f)); Sunset colour
+	default_point_light.set_colour(gef::Colour(0.7f, 0.7f, 1.0f, 1.0f));
+	default_point_light.set_position(gef::Vector4(-500.0f, 400.0f, 700.0f));
+	default_shader_data.AddPointLight(default_point_light);
 
-	ground = new Ground(gef::Vector4(63.5, 0.001f, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
-	ground->initGround(stateMachine->getPhysicsWorld(), xSize, ySize);
-
-	if (scene_assets_)
-	{
-		ground->set_mesh(groundMesh);
-	}
-	else
-	{
-		gef::DebugOut("Ground model failed to load\n");
-	}
+	/*playerLight.set_colour(gef::Colour(0.706f, 0.754f, 1.0f, 1.0f));
+	playerLight.set_position(gef::Vector4(player->getPosition()->x(), player->getPosition()->y() + 1, 0));
+	default_shader_data.AddPointLight(playerLight);*/
 }
 
-void Level_1_State::initDunes()
-{
-	loadAsset("env/dunesCol.scn");
-
-	gef::Mesh* dunesMesh = GetMeshFromSceneAssets(scene_assets_);
-
-	dunes = new Dunes(gef::Vector4(15, 0, -2.3f), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
-	dunes->initDunes();
-
-	if (scene_assets_)
-	{
-		dunes->set_mesh(dunesMesh);
-	}
-	else
-	{
-		gef::DebugOut("Dunes model failed to load\n");
-	}
-}
-
-void Level_1_State::initBackground()
-{
-	loadAsset("background.scn");
-
-	gef::Mesh* backgroundMesh = GetMeshFromSceneAssets(scene_assets_);
-
-	background = new Background(gef::Vector4(18.5f, 0, -1.9f), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
-	background->initBackground();
-
-	if (scene_assets_)
-	{
-		background->set_mesh(backgroundMesh);
-	}
-	else
-	{
-		gef::DebugOut("Background model failed to load\n");
-	}
-}
-
-void Level_1_State::initForeground()
-{
-	loadAsset("foreground.scn");
-
-	gef::Mesh* foregroundMesh = GetMeshFromSceneAssets(scene_assets_);
-
-	foreground = new Foreground(gef::Vector4(21, -1, 2.9f), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
-	foreground->initForeground();
-
-	if (scene_assets_)
-	{
-		foreground->set_mesh(foregroundMesh);
-	}
-	else
-	{
-		gef::DebugOut("Foreground model failed to load\n");
-	}
-}
-
-void Level_1_State::initLargePillars()
-{
-	loadAsset("largePillar.scn");
-
-	gef::Mesh* largePillarMesh = GetMeshFromSceneAssets(scene_assets_);
-
-	float xSize = largePillarMesh->aabb().max_vtx().x() - largePillarMesh->aabb().min_vtx().x();
-	float ySize = largePillarMesh->aabb().max_vtx().y() - largePillarMesh->aabb().min_vtx().y();
-
-	for (int i = 0; i < 2; ++i)
-	{
-		LargePillar* largePillar = new LargePillar(gef::Vector4(35 + (i * 65), 0, 0.5), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
-		largePillar->initLargePillar(stateMachine->getPhysicsWorld(), xSize, ySize);
-
-		if (scene_assets_)
-		{
-			largePillar->set_mesh(largePillarMesh);
-		}
-		else
-		{
-			gef::DebugOut("Large Pillar model failed to load\n");
-		}
-
-		largePillars.push_back(largePillar);
-	}
-}
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Level_1_State::updateCamera()
 {
@@ -335,6 +400,8 @@ void Level_1_State::updateCamera()
 	stateMachine->get3DRenderer()->set_projection_matrix(projection_matrix);
 	stateMachine->get3DRenderer()->set_view_matrix(view_matrix);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Level_1_State::DrawHUD()
 {
@@ -376,32 +443,15 @@ void Level_1_State::DrawHUD()
 	}
 }
 
-void Level_1_State::SetupLights()
-{
-	// grab the data for the default shader used for rendering 3D geometry
-	gef::Default3DShaderData& default_shader_data = stateMachine->get3DRenderer()->default_shader_data();
-
-	// set the ambient light
-	default_shader_data.set_ambient_light_colour(gef::Colour(0.25f, 0.25f, 0.25f, 1.0f));
-
-	//// add a point light that is almost white, but with a blue tinge
-	//// the position of the light is set far away so it acts light a directional light
-	gef::PointLight default_point_light;
-	//default_point_light.set_colour(gef::Colour(0.988f, 0.611f, 0.322f, 1.0f)); Sunset colour
-	default_point_light.set_colour(gef::Colour(0.7f, 0.7f, 1.0f, 1.0f));
-	default_point_light.set_position(gef::Vector4(-500.0f, 400.0f, 700.0f));
-	default_shader_data.AddPointLight(default_point_light);
-
-	/*playerLight.set_colour(gef::Colour(0.706f, 0.754f, 1.0f, 1.0f));
-	playerLight.set_position(gef::Vector4(player->getPosition()->x(), player->getPosition()->y() + 1, 0));
-	default_shader_data.AddPointLight(playerLight);*/
-}
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Level_1_State::loadAsset(const char* assetFilePath)
 {
 	const char* asset = assetFilePath;
 	scene_assets_ = LoadSceneAssets(stateMachine->getPlatform(), assetFilePath);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 gef::Scene* Level_1_State::LoadSceneAssets(gef::Platform& platform, const char* filename)
 {
@@ -423,6 +473,8 @@ gef::Scene* Level_1_State::LoadSceneAssets(gef::Platform& platform, const char* 
 	return scene;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 gef::Mesh* Level_1_State::GetMeshFromSceneAssets(gef::Scene* scene)
 {
 	gef::Mesh* mesh = NULL;
@@ -435,9 +487,13 @@ gef::Mesh* Level_1_State::GetMeshFromSceneAssets(gef::Scene* scene)
 	return mesh;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 gef::Texture* Level_1_State::initStateGraphic(gef::Platform& platform_)
 {
 	stateGraphic = CreateTextureFromPNG("level_1.png", platform_);
 
 	return stateGraphic;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////

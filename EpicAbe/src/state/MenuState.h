@@ -1,12 +1,12 @@
 #pragma once
 #include "GameState.h"
 
+class Platform;
+
 namespace gef
 {
 	class Texture;
 }
-
-class Platform;
 
 class MenuState : public GameState
 {

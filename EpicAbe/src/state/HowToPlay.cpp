@@ -1,11 +1,17 @@
-#include <graphics/sprite_renderer.h>
-#include <graphics/sprite.h>
-#include <input/sony_controller_input_manager.h>
-
+#pragma once
 #include "../texture/load_texture.h"
 #include "HowToPlay.h"
 #include "StateMachine.h"
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+#include <graphics/sprite_renderer.h>
+#include <graphics/sprite.h>
+#include <input/sony_controller_input_manager.h>
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// CONSTRUCTOR / DESTRUCTOR
 HowToPlay::HowToPlay(StateMachine* sm)
 {
 	stateMachine = sm;
@@ -18,6 +24,9 @@ HowToPlay::~HowToPlay()
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// FUNCTIONS
 void HowToPlay::onEnter()
 {
 	/*
@@ -30,10 +39,14 @@ void HowToPlay::onEnter()
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void HowToPlay::onExit()
 {
 	back = false;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void HowToPlay::handleInput(float dt)
 {
@@ -42,6 +55,8 @@ void HowToPlay::handleInput(float dt)
 		back = true;
 	}
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool HowToPlay::update(float dt)
 {
@@ -55,6 +70,8 @@ bool HowToPlay::update(float dt)
 	// THIS WILL BE WEHRE COULD ALSO RETURN FALSE WHICH WILL QUIT THE GAME
 	// SHOULD THE USE CHOOSE TO QUIT GAME FOLLOWING THE ON SCREEN PROMPTS.
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void HowToPlay::render()
 {
@@ -71,9 +88,13 @@ void HowToPlay::render()
 	stateMachine->getSpriteRenderer()->End();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 gef::Texture* HowToPlay::initStateGraphic(gef::Platform& platform_)
 {
 	stateGraphic = CreateTextureFromPNG("howToPlay.png", platform_);
 
 	return stateGraphic;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////

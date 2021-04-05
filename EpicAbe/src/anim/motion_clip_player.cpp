@@ -1,8 +1,13 @@
 #include "motion_clip_player.h"
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #include <animation/animation.h>
 #include <system/debug_log.h>
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// CONSTRUCTOR / DESTRUCTOR
 MotionClipPlayer::MotionClipPlayer() :
 clip_(NULL),
 anim_time_(0.0f),
@@ -16,6 +21,9 @@ void MotionClipPlayer::Init(const gef::SkeletonPose& bind_pose)
 	pose_ = bind_pose;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// FUNCTIONS
 bool MotionClipPlayer::Update(const float delta_time, const gef::SkeletonPose& bind_pose)
 {
 	bool finished = false;
@@ -57,3 +65,5 @@ bool MotionClipPlayer::Update(const float delta_time, const gef::SkeletonPose& b
 	// return true if we have reached the end of the animation, always false when playback is looped
 	return finished;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////

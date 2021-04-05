@@ -1,12 +1,17 @@
-#include <graphics/sprite_renderer.h>
-#include <graphics/sprite.h>
-#include <input/sony_controller_input_manager.h>
-
+#pragma once
 #include "../texture/load_texture.h"
 #include "MenuState.h"
 #include "StateMachine.h"
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include <graphics/sprite_renderer.h>
+#include <graphics/sprite.h>
+#include <input/sony_controller_input_manager.h>
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// CONSTRUCTOR / DESTRUCTOR
 MenuState::MenuState(StateMachine* sm)
 {
 	stateMachine = sm;
@@ -21,6 +26,9 @@ MenuState::~MenuState()
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// FUNCTIONS
 void MenuState::onEnter()
 {
 	/*
@@ -33,12 +41,16 @@ void MenuState::onEnter()
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void MenuState::onExit()
 {
 	isStartGame = false;
 	isOptions = false;
 	isHowToPlay = false;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void MenuState::handleInput(float dt)
 {
@@ -55,6 +67,8 @@ void MenuState::handleInput(float dt)
 		isHowToPlay = true;
 	}
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool MenuState::update(float dt)
 {
@@ -73,9 +87,11 @@ bool MenuState::update(float dt)
 
 	return false;
 
-	// THIS WILL BE WEHRE COULD ALSO RETURN FALSE WHICH WILL QUIT THE GAME
+	// THIS WILL BE WHERE COULD ALSO RETURN FALSE WHICH WILL QUIT THE GAME
 	// SHOULD THE USE CHOOSE TO QUIT GAME FOLLOWING THE ON SCREEN PROMPTS.
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void MenuState::render()
 {
@@ -92,9 +108,13 @@ void MenuState::render()
 	stateMachine->getSpriteRenderer()->End();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 gef::Texture* MenuState::initStateGraphic(gef::Platform& platform_)
 {
 	stateGraphic = CreateTextureFromPNG("mainMenu.png", platform_);
 
 	return stateGraphic;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////

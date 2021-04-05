@@ -1,11 +1,16 @@
 #include "Player.h"
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #include <graphics/scene.h>
 #include <animation/skeleton.h>
 #include <graphics/skinned_mesh_instance.h>
 #include <animation/animation.h>
 #include <graphics/mesh.h>
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// CONSTRUCTOR / DESTRUCTOR
 Player::Player(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation) :
 	xPressed(false),
 	squarePressed(false),
@@ -25,16 +30,43 @@ Player::Player(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation)
 	optionsPressed(false),
 	quit(false)
 {
+	// COLLISION STUFF
+	bodyA = nullptr;
+	bodyB = nullptr;
+
+	// ANIMATION STUFF
+	idleAnimation = nullptr;
+	runAnimation = nullptr;
+	jumpAnimation = nullptr;
+
+	// PHYSICS BODY STUFF
+	playerBody = nullptr;
+
+	// MODEL / MESH STUFF
+	playerModel = nullptr;
+	playerSkinnedMesh = nullptr;
+	meshXdimension = 0;
+	meshYDimension = 0;
+
+	// PLATFORM / CONTROLLER STUFF
 	m_platform = nullptr;
 	m_im = nullptr;
 	m_scim = nullptr;
 	m_controller = nullptr;
+	leftStickX = 0;
+	rightStickX = 0;
+	leftStickY = 0;
+	rightStickY = 0;
+	rightStickAngleRad = 0;
+	rightStickAngleDeg = 0;
+	leftStickAngleRad = 0;
+	leftStickAngleDeg = 0;
 
+	// PLAYER STUFF
 	m_startPos = position;			// Start position is saved in case we ever need to reset back to start pos.
 	m_position = position;
 	m_scale = scale;
 	m_rotation = rotation;
-
 	playerYPos = 0;
 	speed = 50;
 	maxSpeed = 3;
@@ -46,18 +78,6 @@ Player::Player(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation)
 	facingRight = true;
 	isJumping = false;
 	isMoving = false;
-
-	leftStickX = 0;
-	rightStickX = 0;
-	leftStickY = 0;
-	rightStickY = 0;
-	rightStickAngleRad = 0;
-	rightStickAngleDeg = 0;
-	leftStickAngleRad = 0;
-	leftStickAngleDeg = 0;
-
-	meshXdimension = 0;
-	meshYDimension = 0;
 }
 
 Player::~Player()
@@ -70,8 +90,17 @@ Player::~Player()
 
 	delete idleAnimation;
 	idleAnimation = nullptr;
+
+	delete runAnimation;
+	runAnimation = nullptr;
+
+	delete jumpAnimation;
+	jumpAnimation = nullptr;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// FUNCTIONS
 void Player::handleInput(float dt)
 {
 	// HANDLE INPUT
@@ -81,12 +110,10 @@ void Player::handleInput(float dt)
 	// END HANDLE INPUT
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 bool Player::update(float dt, b2World* world_)
 {
-	//playerYPos = playerBody->GetPosition().y;
-
-	//handleInput(dt);
-
 	if (playerSkinnedMesh)
 	{
 		// update the pose in the anim player from the animation
@@ -103,16 +130,18 @@ bool Player::update(float dt, b2World* world_)
 	return true;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Player::render(gef::Renderer3D* rend3D)
 {
-	//rend3D->DrawMesh(*this);
-
 	// draw the player, the pose is defined by the bone matrices
 	if (playerSkinnedMesh)
 	{
 		rend3D->DrawSkinnedMesh(*this, playerSkinnedMesh->bone_matrices());
 	}
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Player::initInputManager(gef::Platform& platform,
 	gef::InputManager* im,
@@ -125,6 +154,8 @@ void Player::initInputManager(gef::Platform& platform,
 	m_scim = scim;
 	m_controller = controller;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Player::checkCollisions(float dt, b2World* world_)
 {
@@ -179,6 +210,8 @@ void Player::checkCollisions(float dt, b2World* world_)
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Player::setButtonState()
 {
 	xPressed = false;
@@ -198,6 +231,8 @@ void Player::setButtonState()
 	sharePressed = false;
 	optionsPressed = false;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Player::switchButtonsDown(float dt)
 {
@@ -245,11 +280,9 @@ void Player::switchButtonsDown(float dt)
 				break;
 			case gef_SONY_CTRL_UP:
 				upDPressed = true;
-				move('u', -1, dt);	// For movement with D-Pad instead of sticks.
 				break;
 			case gef_SONY_CTRL_DOWN:
 				downDPressed = true;
-				move('d', 1, dt);		// For movement with D-Pad instead of sticks.
 				break;
 			case gef_SONY_CTRL_LEFT:
 				leftDPressed = true;
@@ -278,6 +311,8 @@ void Player::switchButtonsDown(float dt)
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Player::checkSticks(float dt)
 {
 	if (m_scim != nullptr)
@@ -304,12 +339,10 @@ void Player::checkSticks(float dt)
 			// If we're pushing right on left stick.
 			if (leftStickX >= 0)
 			{
-				//rotating = true;
 				leftStickAngleDeg += 90;
 			}
 			else if (leftStickX <= 0)	// If we're pushing left on left stick.
 			{
-				//rotating = true;
 				leftStickAngleDeg += 270;
 			}
 
@@ -319,10 +352,6 @@ void Player::checkSticks(float dt)
 				//rotating = false;
 				leftStickAngleRad = 0;
 				leftStickAngleDeg = 0;
-			}
-			else
-			{
-				//m_rotation.set_y(-leftStickAngleDeg * dt);
 			}
 
 			// Control movement with left thumb stick
@@ -338,23 +367,14 @@ void Player::checkSticks(float dt)
 			{
 				animationPlayer.set_clip(idleAnimation);
 			}
-
-			/*if (leftStickY < 0)
-			{
-				move('u', leftStickY, dt);
-			}
-			else if (leftStickY > 0)
-			{
-				move('d', leftStickY, dt);
-			}*/
 		}
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Player::move(char direction, float scale, float dt)
 {
-	//isMoving = true;
-
 	// UP = -1 and DOWN = 1.
 	switch (direction)
 	{
@@ -378,12 +398,6 @@ void Player::move(char direction, float scale, float dt)
 			facingRight = false;
 		}
 		break;
-	/*case 'u':
-		m_position += gef::Vector4(0, 0, scale) * dt * speed;
-		break;
-	case 'd':
-		m_position += gef::Vector4(0, 0, scale) * dt * speed;
-		break;*/
 	default:
 		break;
 	}
@@ -396,20 +410,28 @@ void Player::move(char direction, float scale, float dt)
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Player::resetPosition()
 {
 	m_position = m_startPos;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Player::checkBounds()
 {
 	// Need to setup AABB for this! I think meshes already have AABB setup when created.
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Player::buildTransform()
 {
 	UpdateFromSimulation(playerBody);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Player::jump(float dt)
 {
@@ -418,10 +440,9 @@ void Player::jump(float dt)
 
 	animationPlayer.set_clip(jumpAnimation);
 	animationPlayer.set_looping(false);
-	
-	//playerBody->ApplyLinearImpulseToCenter(b2Vec2(0, jumpForce), true);
-	//playerBody->ApplyLinearImpulse(b2Vec2(0, jumpForce), b2Vec2(playerBody->GetPosition().x - (m_scale.x() * 0.5f * leftStickX), playerBody->GetPosition().y - (m_scale.y() * 0.5f)), true);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Player::initModelPlayer()
 {
@@ -429,6 +450,8 @@ void Player::initModelPlayer()
 	playerModel = new gef::Scene();
 	loadAsset(*m_platform, "abe.scn");
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Player::initPhysicsBody(b2World* world)
 {
@@ -452,6 +475,8 @@ void Player::initPhysicsBody(b2World* world)
 	// Create and attach the players fixture.
 	playerBody->CreateFixture(&playerFixtureDef);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 void Player::loadAsset(gef::Platform& platform, const char* assetFilePath)
@@ -486,6 +511,8 @@ void Player::loadAsset(gef::Platform& platform, const char* assetFilePath)
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 gef::Animation* Player::LoadAnimation(const char* anim_scene_filename, const char* anim_name)
 {
 	gef::Animation* anim = NULL;
@@ -510,6 +537,8 @@ gef::Animation* Player::LoadAnimation(const char* anim_scene_filename, const cha
 	return anim;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 gef::Scene* Player::LoadSceneAssets(gef::Platform& platform, const char* filename)
 {
 	gef::Scene* scene = new gef::Scene();
@@ -530,6 +559,8 @@ gef::Scene* Player::LoadSceneAssets(gef::Platform& platform, const char* filenam
 	return scene;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 gef::Mesh* Player::GetMeshFromSceneAssets(gef::Scene* scene)
 {
 	gef::Mesh* mesh = NULL;
@@ -541,6 +572,8 @@ gef::Mesh* Player::GetMeshFromSceneAssets(gef::Scene* scene)
 
 	return mesh;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 gef::Skeleton* Player::GetFirstSkeleton(gef::Scene* scene)
 {
@@ -557,11 +590,15 @@ gef::Skeleton* Player::GetFirstSkeleton(gef::Scene* scene)
 	return skeleton;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
+// GETTERS / SETTERS
 gef::Vector4* Player::getPosition()
 {
 	return &m_position;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Player::setRotation(gef::Vector4 newRot)
 {
@@ -570,57 +607,81 @@ void Player::setRotation(gef::Vector4 newRot)
 	m_rotation.set_z(newRot.z());
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 float Player::getLeftStickAngle()
 {
 	return leftStickAngleDeg;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 float Player::getPlayerYPos()
 {
 	return playerYPos;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 bool Player::getHasCollided()
 {
 	return hasCollided;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 b2Body* Player::getCollidingBodyA()
 {
 	return bodyA;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 b2Body* Player::getCollidingBodyB()
 {
 	return bodyB;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 b2Body* Player::getPlayerBody()
 {
 	return playerBody;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 int Player::getPlayerHealth()
 {
 	return playerHealth;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool Player::isOnGround()
 {
 	return onGround;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 bool Player::getIsFacingLeft()
 {
 	return facingLeft;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool Player::getIsFacingRight()
 {
 	return facingRight;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 const gef::SonyController* Player::getSonyController()
 {
 	return m_controller;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
