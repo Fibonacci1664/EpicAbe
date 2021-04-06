@@ -10,6 +10,7 @@ Enemy::Enemy(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation)
 	m_position = position;
 	m_scale = scale;
 	m_rotation = rotation;
+	maxSpeed = 4;
 	speed = 4;
 	m_startPos = position;			// Start position is saved in case we ever need to reset back to start pos.
 }
@@ -31,6 +32,7 @@ void Enemy::handleInput(float dt)
 
 void Enemy::update(float dt)
 {
+	move(dt);
 	buildTransform();
 }
 

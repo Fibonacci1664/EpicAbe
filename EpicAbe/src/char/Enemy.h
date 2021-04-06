@@ -40,6 +40,7 @@ public:
 private:
 
 	float speed;
+	float maxSpeed;
 
 	gef::Vector4 m_scale;
 	gef::Vector4 m_rotation;

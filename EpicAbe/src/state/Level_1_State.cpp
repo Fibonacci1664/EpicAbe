@@ -6,6 +6,7 @@
 #include "../env/Dunes.h"
 #include "../env/Ground.h"
 #include "../env/EnvPlatform.h"
+#include "../collectable/Ruby.h"
 #include "../env/LevelEndDoor.h"
 #include "../env/Background.h"
 #include "../env/Foreground.h"
@@ -60,6 +61,12 @@ Level_1_State::~Level_1_State()
 	delete ground;
 	ground = nullptr;
 
+	delete smallPlatform;
+	smallPlatform = nullptr;
+
+	delete ruby;
+	ruby = nullptr;
+
 	delete player;
 	player = nullptr;
 
@@ -83,6 +90,7 @@ void Level_1_State::initLevel()
 	initLevelEndDoor();
 	initGround();
 	initEnvPlatforms();
+	initRubies();
 	initPlayer();
 	initEnemy();
 	SetupLights();
@@ -150,12 +158,12 @@ bool Level_1_State::update(float dt)
 	player->update(dt, stateMachine->getPhysicsWorld());
 	ground->update(dt);
 	smallPlatform->update(dt);
+	ruby->update(dt);
 	largePillar->update(dt);
 
 	for (int i = 0; i < enemies.size(); ++i)
 	{
 		enemies[i]->update(dt);
-		enemies[i]->move(dt);
 	}
 
 	return false;
@@ -181,6 +189,7 @@ void Level_1_State::render()
 	levelEndDoor->render(stateMachine->get3DRenderer());
 	ground->render(stateMachine->get3DRenderer());
 	smallPlatform->render(stateMachine->get3DRenderer());
+	ruby->render(stateMachine->get3DRenderer());
 	stateMachine->getSpriteRenderer()->End();
 
 	// start drawing sprites, but don't clear the frame buffer
@@ -359,6 +368,30 @@ void Level_1_State::initEnvPlatforms()
 	else
 	{
 		gef::DebugOut("Small platform model failed to load\n");
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Level_1_State::initRubies()
+{
+	loadAsset("ruby.scn");
+
+	gef::Mesh* rubyMesh = GetMeshFromSceneAssets(scene_assets_);
+
+	float xSize = rubyMesh->aabb().max_vtx().x() - rubyMesh->aabb().min_vtx().x();
+	float ySize = rubyMesh->aabb().max_vtx().y() - rubyMesh->aabb().min_vtx().y();
+
+	ruby = new Ruby(gef::Vector4(45.5f, 1.5f, 0), gef::Vector4(2.0f, 2.0f, 2.0f), gef::Vector4(-1.5707f, 0, 0));
+	ruby->initRuby(stateMachine->getPhysicsWorld(), xSize, ySize);
+
+	if (scene_assets_)
+	{
+		ruby->set_mesh(rubyMesh);
+	}
+	else
+	{
+		gef::DebugOut("Ruby model failed to load\n");
 	}
 }
 

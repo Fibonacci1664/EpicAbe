@@ -33,6 +33,7 @@ class Dunes;
 class Player;
 class Enemy;
 class EnvPlatform;
+class Ruby;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -61,6 +62,7 @@ private:
 	void initEnemy();
 	void initGround();
 	void initEnvPlatforms();
+	void initRubies();
 	void initDunes();
 	void initBackground();
 	void initForeground();
@@ -100,6 +102,9 @@ private:
 
 	// ENV PLATFORMS STUFF
 	EnvPlatform* smallPlatform;
+
+	// COLLECTABLE RUBY STUFF
+	Ruby* ruby;
 
 	// PLAYER STUFF
 	Player* player;
