@@ -84,6 +84,9 @@
     <ClCompile Include="src\state\LevelComplete.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\env\EnvPlatform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Anim\motion_clip_player.h">
@@ -150,6 +153,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\state\LevelComplete.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\env\EnvPlatform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -124,6 +124,12 @@ bool Player::update(float dt, b2World* world_)
 		playerSkinnedMesh->UpdateBoneMatrices(animationPlayer.pose());
 	}
 
+	if (isJumping)
+	{
+		animationPlayer.set_looping(true);
+		animationPlayer.set_playback_speed(0.75);
+	}
+
 	checkCollisions(dt, world_);
 	buildTransform();
 
@@ -195,9 +201,10 @@ void Player::checkCollisions(float dt, b2World* world_)
 					|| *objectB->getType() == ObjectType::ENVIRONMENT && *objectA->getType() == ObjectType::PLAYER)
 				{
 					onGround = true;
+					isJumping = false;
 				}
 
-				// Set for collisions with collectable and enemy and goal.
+				// Set for collisions with collectable
 			}
 		}
 		else
@@ -247,7 +254,6 @@ void Player::switchButtonsDown(float dt)
 				if (onGround)
 				{
 					jump(dt);
-					onGround = false;
 				}
 				break;
 			case gef_SONY_CTRL_SQUARE:
@@ -365,7 +371,10 @@ void Player::checkSticks(float dt)
 			}
 			else
 			{
-				animationPlayer.set_clip(idleAnimation);
+				if (!isJumping)
+				{
+					animationPlayer.set_clip(idleAnimation);
+				}
 			}
 		}
 	}
@@ -435,11 +444,14 @@ void Player::buildTransform()
 
 void Player::jump(float dt)
 {
-	// If we pressed the jump button, we must be in the air, i.e. we're NOT on the ground.
-	playerBody->ApplyForceToCenter(b2Vec2(0, jumpForce), true);
+	isJumping = true;
+	onGround = false;
 
 	animationPlayer.set_clip(jumpAnimation);
-	animationPlayer.set_looping(false);
+	animationPlayer.set_anim_time(animationPlayer.clip()->start_time());
+
+	// If we pressed the jump button, we must be in the air, i.e. we're NOT on the ground.
+	playerBody->ApplyForceToCenter(b2Vec2(0, jumpForce), true);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

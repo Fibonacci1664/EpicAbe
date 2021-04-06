@@ -32,6 +32,7 @@ class LargePillar;
 class Dunes;
 class Player;
 class Enemy;
+class EnvPlatform;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -59,6 +60,7 @@ private:
 	void initPlayer();
 	void initEnemy();
 	void initGround();
+	void initEnvPlatforms();
 	void initDunes();
 	void initBackground();
 	void initForeground();
@@ -96,6 +98,9 @@ private:
 	// GROUND STUFF
 	Ground* ground;
 
+	// ENV PLATFORMS STUFF
+	EnvPlatform* smallPlatform;
+
 	// PLAYER STUFF
 	Player* player;
 	gef::PointLight playerLight;
@@ -106,7 +111,7 @@ private:
 	// LEVEL MODEL LOADING STUFF
 	gef::Scene* scene_assets_;
 
-	// STATE MACHINE STUFF;
+	// STATE MACHINE STUFF
 	StateMachine* stateMachine;
 
 	float fps;

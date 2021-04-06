@@ -5,6 +5,7 @@
 #include "../char/Enemy.h"
 #include "../env/Dunes.h"
 #include "../env/Ground.h"
+#include "../env/EnvPlatform.h"
 #include "../env/LevelEndDoor.h"
 #include "../env/Background.h"
 #include "../env/Foreground.h"
@@ -81,6 +82,7 @@ void Level_1_State::initLevel()
 	initLargePillar();
 	initLevelEndDoor();
 	initGround();
+	initEnvPlatforms();
 	initPlayer();
 	initEnemy();
 	SetupLights();
@@ -147,6 +149,7 @@ bool Level_1_State::update(float dt)
 
 	player->update(dt, stateMachine->getPhysicsWorld());
 	ground->update(dt);
+	smallPlatform->update(dt);
 	largePillar->update(dt);
 
 	for (int i = 0; i < enemies.size(); ++i)
@@ -177,6 +180,7 @@ void Level_1_State::render()
 	largePillar->render(stateMachine->get3DRenderer());
 	levelEndDoor->render(stateMachine->get3DRenderer());
 	ground->render(stateMachine->get3DRenderer());
+	smallPlatform->render(stateMachine->get3DRenderer());
 	stateMachine->getSpriteRenderer()->End();
 
 	// start drawing sprites, but don't clear the frame buffer
@@ -333,6 +337,28 @@ void Level_1_State::initGround()
 	else
 	{
 		gef::DebugOut("Ground model failed to load\n");
+	}
+}
+
+void Level_1_State::initEnvPlatforms()
+{
+	loadAsset("smallPlatform.scn");
+
+	gef::Mesh* smallPlatformMesh = GetMeshFromSceneAssets(scene_assets_);
+
+	float xSize = smallPlatformMesh->aabb().max_vtx().x() - smallPlatformMesh->aabb().min_vtx().x();
+	float ySize = smallPlatformMesh->aabb().max_vtx().y() - smallPlatformMesh->aabb().min_vtx().y();
+
+	smallPlatform = new EnvPlatform(gef::Vector4(45, 1, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+	smallPlatform->initEnvPlatform(stateMachine->getPhysicsWorld(), xSize, ySize);
+
+	if (scene_assets_)
+	{
+		smallPlatform->set_mesh(smallPlatformMesh);
+	}
+	else
+	{
+		gef::DebugOut("Small platform model failed to load\n");
 	}
 }
 
