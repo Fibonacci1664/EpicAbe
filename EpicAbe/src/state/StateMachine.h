@@ -15,6 +15,7 @@ class PauseState;
 class OptionsState;
 class HowToPlay;
 class b2World;
+class Game;
 
 namespace gef
 {
@@ -35,7 +36,8 @@ public:
 	StateMachine(gef::Platform& platform_);
 	~StateMachine();
 
-	void init(gef::Platform& platform_, gef::SpriteRenderer* spRend, gef::Renderer3D* rend3D, gef::Font* font_, b2World* world);
+	void initGameWorld(gef::Platform& platform_, Game* theGame, b2World* world);
+	void initRend(gef::SpriteRenderer* spRend, gef::Renderer3D* rend3D, gef::Font* font_);
 	void initInputControl(gef::InputManager* im, const gef::SonyController* sc, gef::SonyControllerInputManager* scim);
 	void initStates();
 	void onEnter();
@@ -54,6 +56,7 @@ public:
 	gef::SonyControllerInputManager* getSonyControllerIM();
 	b2World* getPhysicsWorld();
 	gef::Renderer3D* get3DRenderer();
+	Game* getGame();
 
 	SplashState* splashState;
 	MenuState* mainMenuState;
@@ -78,6 +81,7 @@ private:
 	const gef::SonyController* sc_;
 	gef::SonyControllerInputManager* scim_;
 	b2World* theWorld;
+	Game* game;
 
 	std::map<std::string, GameState*> states;
 };

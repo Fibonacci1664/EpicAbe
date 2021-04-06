@@ -1,7 +1,7 @@
 #pragma once
+#include "StateMachine.h"
 #include "Level_1_Intro.h"
 #include "../texture/load_texture.h"
-#include "StateMachine.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -38,6 +38,9 @@ public:
 	void Render();
 	void CleanUp();
 
+	float getGameVolume();
+	void setGameVolume(float newVol);
+
 private:
 	void initFont();
 	void initInputManager();

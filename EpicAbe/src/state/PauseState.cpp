@@ -1,6 +1,6 @@
 #pragma once
-#include "PauseState.h"
 #include "StateMachine.h"
+#include "PauseState.h"
 #include "../texture/load_texture.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

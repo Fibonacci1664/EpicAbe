@@ -1,6 +1,6 @@
 #pragma once
-#include "Level_1_State.h"
 #include "StateMachine.h"
+#include "Level_1_State.h"
 #include "../char/Player.h"
 #include "../char/Enemy.h"
 #include "../env/Dunes.h"

@@ -1,7 +1,7 @@
 #pragma once
-#include "../texture/load_texture.h"
-#include "HowToPlay.h"
 #include "StateMachine.h"
+#include "HowToPlay.h"
+#include "../texture/load_texture.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 

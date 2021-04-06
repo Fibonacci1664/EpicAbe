@@ -1,13 +1,14 @@
 #pragma once
+#include "StateMachine.h"
 #include "SplashState.h"
 #include "MenuState.h"
-#include "StateMachine.h"
 #include "Level_1_Intro.h"
 #include "Level_1_State.h"
 #include "LevelComplete.h"
 #include "PauseState.h"
 #include "OptionsState.h"
 #include "HowToPlay.h"
+#include "../../Game.h"
 #include "system/platform.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,6 +37,7 @@ StateMachine::StateMachine(gef::Platform& platform_) : platform(platform_)
 	sc_ = nullptr;
 	scim_ = nullptr;
 	theWorld = nullptr;
+	game = nullptr;
 }
 
 StateMachine::~StateMachine()
@@ -103,12 +105,19 @@ void StateMachine::render()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-void StateMachine::init(gef::Platform& platform_, gef::SpriteRenderer* spRend, gef::Renderer3D* rend3D, gef::Font* font_, b2World* world)
+void StateMachine::initGameWorld(gef::Platform& platform_, Game* theGame, b2World* world)
+{
+	game = theGame;
+	theWorld = world;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void StateMachine::initRend(gef::SpriteRenderer* spRend, gef::Renderer3D* rend3D, gef::Font* font_)
 {
 	sprRend = spRend;
 	renderer3D = rend3D;
 	font = font_;
-	theWorld = world;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -223,6 +232,13 @@ b2World* StateMachine::getPhysicsWorld()
 gef::Renderer3D* StateMachine::get3DRenderer()
 {
 	return renderer3D;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+Game* StateMachine::getGame()
+{
+	return game;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

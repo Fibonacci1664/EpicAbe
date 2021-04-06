@@ -123,14 +123,6 @@ void Game::initFont()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-void Game::initInputManager()
-{
-	im = gef::InputManager::Create(platform_);
-	scim = im->controller_input();
-	controller = scim->GetController(0);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Game::initWorld()
 {
@@ -143,10 +135,20 @@ void Game::initWorld()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
+void Game::initInputManager()
+{
+	im = gef::InputManager::Create(platform_);
+	scim = im->controller_input();
+	controller = scim->GetController(0);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Game::initStateMachine()
 {
 	stateMachine = new StateMachine(platform_);
-	stateMachine->init(platform_, sprite_renderer_, renderer_3d_, font_, world_);
+	stateMachine->initGameWorld(platform_, this, world_);
+	stateMachine->initRend(sprite_renderer_, renderer_3d_, font_);
 	stateMachine->initInputControl(im, controller, scim);
 	stateMachine->initStates();	
 }
@@ -165,6 +167,22 @@ void Game::initAudio()
 	audioManager->SetMusicVolumeInfo(*volumeInfoControl);
 
 	audioManager->PlayMusic();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+// GETTERS/ SETTERS
+float Game::getGameVolume()
+{
+	return volumeInfoControl->volume;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Game::setGameVolume(float newVol)
+{
+	volumeInfoControl->volume = newVol;
+	audioManager->SetMusicVolumeInfo(*volumeInfoControl);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

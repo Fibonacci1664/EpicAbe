@@ -1,7 +1,7 @@
 #pragma once
 #include "../texture/load_texture.h"
-#include "SplashState.h"
 #include "StateMachine.h"
+#include "SplashState.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 

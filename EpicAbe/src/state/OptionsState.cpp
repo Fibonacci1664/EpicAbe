@@ -1,7 +1,8 @@
 #pragma once
-#include "OptionsState.h"
 #include "StateMachine.h"
+#include "OptionsState.h"
 #include "../texture/load_texture.h"
+#include "../../Game.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -56,10 +57,16 @@ void OptionsState::handleInput(float dt)
 	if (stateMachine->getSonyController()->buttons_released() & gef_SONY_CTRL_L1)
 	{
 		// turn music down
+		float volume = stateMachine->getGame()->getGameVolume();
+		volume *= 0.75f;
+		stateMachine->getGame()->setGameVolume(volume);
 	}
 	else if (stateMachine->getSonyController()->buttons_released() & gef_SONY_CTRL_R1)
 	{
 		// turn music up
+		float volume = stateMachine->getGame()->getGameVolume();
+		volume *= 1.25f;
+		stateMachine->getGame()->setGameVolume(volume);
 	}
 }
 

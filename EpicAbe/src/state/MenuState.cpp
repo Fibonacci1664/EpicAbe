@@ -1,7 +1,7 @@
 #pragma once
-#include "../texture/load_texture.h"
-#include "MenuState.h"
 #include "StateMachine.h"
+#include "MenuState.h"
+#include "../texture/load_texture.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
