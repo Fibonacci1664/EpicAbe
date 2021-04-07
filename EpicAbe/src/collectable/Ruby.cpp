@@ -11,9 +11,11 @@ Ruby::Ruby(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation, boo
 	m_startPos = position;
 	isHUDRuby = isHUD;
 	rubyBody = nullptr;
+	theWorld = nullptr;
 	speed = 0;
 	force = -10.0f;
-	//buildTransform();
+	alive = true;
+	bodyDestroyed = false;
 }
 
 Ruby::~Ruby()
@@ -30,6 +32,11 @@ void Ruby::update(float dt)
 	{
 		move(dt);
 	}
+
+	if (!alive)
+	{
+		destroyBody();
+	}
 	
 	buildTransform();
 }
@@ -45,6 +52,8 @@ void Ruby::render(gef::Renderer3D* rend3D)
 
 void Ruby::initRuby(b2World* world, float xMeshSize, float yMeshSize)
 {
+	theWorld = world;
+
 	currentType = ObjectType::COLLECTABLE;
 
 	// Set up box2d static body for env.
@@ -111,6 +120,35 @@ void Ruby::move(float dt)
 	{
 		rubyBody->ApplyForceToCenter(b2Vec2(0, force * speed * dt), true);
 	}	
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Ruby::setIsAlive(bool isAlive)
+{
+	alive = isAlive;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool Ruby::getIsAlive()
+{
+	return alive;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool Ruby::getIsBodyDestroyed()
+{
+	return bodyDestroyed;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Ruby::destroyBody()
+{
+	theWorld->DestroyBody(rubyBody);
+	bodyDestroyed = true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

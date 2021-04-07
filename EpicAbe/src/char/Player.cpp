@@ -228,12 +228,7 @@ void Player::checkCollisions(float dt, b2World* world_)
 						// maybe dont delete as that causes problems but instead
 						// have it dead or alive and then only update and render based on ifAlive.
 						Ruby* ruby = reinterpret_cast<Ruby*>(bodyB->GetUserData().pointer);
-						// call destructor on obj?
-
-						/*delete ruby->mesh();
-						ruby->set_mesh(nullptr);
-						delete ruby;
-						ruby = nullptr;*/
+						ruby->setIsAlive(false);
 					}
 				}
 			}

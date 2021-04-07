@@ -19,6 +19,11 @@ public:
 	void initRuby(b2World* world, float xMeshSize, float yMeshSize);
 	void buildTransform();
 	void move(float dt);
+	void destroyBody();
+
+	void setIsAlive(bool isAlive);
+	bool getIsAlive();
+	bool getIsBodyDestroyed();
 
 	void setPosition(gef::Vector4 position);
 	void setRotation(gef::Vector4 newRot);
@@ -28,12 +33,15 @@ private:
 	float speed;
 	bool isHUDRuby;
 	float force;
+	bool alive;
+	bool bodyDestroyed;
 
 	// ENV PHYSICS BODY STUFF
 	b2BodyDef rubyBodyDef;
 	b2Body* rubyBody;
 	b2PolygonShape rubyPolygonShape;
 	b2FixtureDef rubyFixDef;
+	b2World* theWorld;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

@@ -196,7 +196,12 @@ void Level_1_State::render()
 	levelEndDoor->render(stateMachine->get3DRenderer());
 	ground->render(stateMachine->get3DRenderer());
 	smallPlatform->render(stateMachine->get3DRenderer());
-	ruby->render(stateMachine->get3DRenderer());
+
+	if (ruby->getIsAlive())
+	{
+		ruby->render(stateMachine->get3DRenderer());
+	}
+	
 	hudRuby->render(stateMachine->get3DRenderer());
 	stateMachine->getSpriteRenderer()->End();
 
@@ -534,8 +539,11 @@ void Level_1_State::updateCamera()
 
 void Level_1_State::updateRubies(float dt)
 {
-	ruby->update(dt);
-
+	if (!ruby->getIsBodyDestroyed())
+	{
+		ruby->update(dt);
+	}
+	
 	hudRuby->setPosition(gef::Vector4(player->getPosition()->x() + rubyStartPosOffsetX, rubyStartYPos, 0));
 	hudRuby->setRotation(gef::Vector4(-1.5707f, rotation, 0));
 	hudRuby->update(dt);
