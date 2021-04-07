@@ -92,8 +92,8 @@ void OptionsState::render()
 	gef::Sprite optionsMenu;
 	optionsMenu.set_texture(stateGraphic);
 	optionsMenu.set_position(stateMachine->getPlatform().width() * 0.5f, stateMachine->getPlatform().height() * 0.5f, -0.99f);
-	optionsMenu.set_height(1125.0f);
-	optionsMenu.set_width(2000.0f);
+	optionsMenu.set_height(810);
+	optionsMenu.set_width(1440);
 	stateMachine->getSpriteRenderer()->DrawSprite(optionsMenu);
 
 	stateMachine->getSpriteRenderer()->End();

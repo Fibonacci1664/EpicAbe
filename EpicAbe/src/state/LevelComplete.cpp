@@ -79,8 +79,8 @@ void LevelComplete::render()
 	gef::Sprite complete;
 	complete.set_texture(stateGraphic);
 	complete.set_position(stateMachine->getPlatform().width() * 0.5f, stateMachine->getPlatform().height() * 0.5f, -0.99f);
-	complete.set_height(1125.0f);
-	complete.set_width(2000.0f);
+	complete.set_height(810);
+	complete.set_width(1440);
 	stateMachine->getSpriteRenderer()->DrawSprite(complete);
 
 	stateMachine->getSpriteRenderer()->End();

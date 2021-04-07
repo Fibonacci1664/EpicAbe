@@ -11,7 +11,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 	srand(time(NULL));
 
 	// initialisation
-	gef::PlatformD3D11 platform(hInstance, 2000, 1125, false, true);
+	gef::PlatformD3D11 platform(hInstance, 1440, 810, false, true);
 
 	Game epicAbe(platform);
 	epicAbe.Run();

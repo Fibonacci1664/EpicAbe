@@ -108,8 +108,8 @@ void MenuState::render()
 	gef::Sprite mainMenu;
 	mainMenu.set_texture(stateGraphic);
 	mainMenu.set_position(stateMachine->getPlatform().width() * 0.5f, stateMachine->getPlatform().height() * 0.5f, -0.99f);
-	mainMenu.set_height(1125.0f);
-	mainMenu.set_width(2000.0f);
+	mainMenu.set_height(810);
+	mainMenu.set_width(1440);
 	stateMachine->getSpriteRenderer()->DrawSprite(mainMenu);
 
 	stateMachine->getSpriteRenderer()->End();

@@ -79,8 +79,8 @@ void Level_1_Intro::render()
 	gef::Sprite intro;
 	intro.set_texture(stateGraphic);
 	intro.set_position(stateMachine->getPlatform().width() * 0.5f, stateMachine->getPlatform().height() * 0.5f, -0.99f);
-	intro.set_height(1125.0f);
-	intro.set_width(2000.0f);
+	intro.set_height(810);
+	intro.set_width(1440);
 	stateMachine->getSpriteRenderer()->DrawSprite(intro);
 
 	stateMachine->getSpriteRenderer()->End();

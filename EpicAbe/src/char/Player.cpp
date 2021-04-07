@@ -79,6 +79,7 @@ Player::Player(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation)
 	facingRight = true;
 	isJumping = false;
 	isMoving = false;
+	rubiesCollected = 0;
 }
 
 Player::~Player()
@@ -224,11 +225,9 @@ void Player::checkCollisions(float dt, b2World* world_)
 						// play sfx
 						
 						// This is fine, this gets me access to the same ruby object.
-						// HOW DO I DELETE IT THOUGH?
-						// maybe dont delete as that causes problems but instead
-						// have it dead or alive and then only update and render based on ifAlive.
 						Ruby* ruby = reinterpret_cast<Ruby*>(bodyB->GetUserData().pointer);
 						ruby->setIsAlive(false);
+						++rubiesCollected;
 					}
 				}
 			}
@@ -713,6 +712,20 @@ bool Player::getIsFacingLeft()
 bool Player::getIsFacingRight()
 {
 	return facingRight;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool Player::getRubiesCollected()
+{
+	return rubiesCollected;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Player::setRubiesCollected(int amount)
+{
+	rubiesCollected += amount;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

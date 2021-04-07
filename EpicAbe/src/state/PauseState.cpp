@@ -97,8 +97,8 @@ void PauseState::render()
 	gef::Sprite pauseMenu;
 	pauseMenu.set_texture(stateGraphic);
 	pauseMenu.set_position(stateMachine->getPlatform().width() * 0.5f, stateMachine->getPlatform().height() * 0.5f, -0.99f);
-	pauseMenu.set_height(1125.0f);
-	pauseMenu.set_width(2000.0f);
+	pauseMenu.set_height(810);
+	pauseMenu.set_width(1440);
 	stateMachine->getSpriteRenderer()->DrawSprite(pauseMenu);
 
 	stateMachine->getSpriteRenderer()->End();

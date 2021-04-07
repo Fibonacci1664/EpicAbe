@@ -66,6 +66,8 @@ public:
 	bool isOnGround();
 	bool getIsFacingLeft();
 	bool getIsFacingRight();
+	bool getRubiesCollected();
+	void setRubiesCollected(int amount);
 	
 private:
 
@@ -144,6 +146,7 @@ private:
 	bool facingRight;
 	bool isJumping;
 	bool isMoving;
+	int rubiesCollected;
 
 	// COLLISION STUFF
 	b2Body* bodyA;

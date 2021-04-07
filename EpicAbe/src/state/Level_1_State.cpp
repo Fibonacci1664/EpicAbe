@@ -349,7 +349,7 @@ void Level_1_State::initGround()
 	float xSize = groundMesh->aabb().max_vtx().x() - groundMesh->aabb().min_vtx().x();
 	float ySize = groundMesh->aabb().max_vtx().y() - groundMesh->aabb().min_vtx().y();
 
-	ground = new Ground(gef::Vector4(63.5, 0.001f, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+	ground = new Ground(gef::Vector4(63.5, 0, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
 	ground->initGround(stateMachine->getPhysicsWorld(), xSize, ySize);
 
 	if (scene_assets_)
@@ -371,7 +371,7 @@ void Level_1_State::initEnvPlatforms()
 	float xSize = smallPlatformMesh->aabb().max_vtx().x() - smallPlatformMesh->aabb().min_vtx().x();
 	float ySize = smallPlatformMesh->aabb().max_vtx().y() - smallPlatformMesh->aabb().min_vtx().y();
 
-	smallPlatform = new EnvPlatform(gef::Vector4(45, 1, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+	smallPlatform = new EnvPlatform(gef::Vector4(45, 1.15f, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
 	smallPlatform->initEnvPlatform(stateMachine->getPhysicsWorld(), xSize, ySize);
 
 	if (scene_assets_)
@@ -403,7 +403,7 @@ void Level_1_State::initCollectableRubies()
 	float xSize = rubyMesh->aabb().max_vtx().x() - rubyMesh->aabb().min_vtx().x();
 	float ySize = rubyMesh->aabb().max_vtx().y() - rubyMesh->aabb().min_vtx().y();
 
-	ruby = new Ruby(gef::Vector4(45.5f, 1.5f, 0), gef::Vector4(2.0f, 2.0f, 2.0f), gef::Vector4(-1.5707f, 0, 0), false);
+	ruby = new Ruby(gef::Vector4(45.5f, 1.65f, 0), gef::Vector4(2.0f, 2.0f, 2.0f), gef::Vector4(-1.5707f, 0, 0), false);
 	ruby->initRuby(stateMachine->getPhysicsWorld(), xSize, ySize);
 
 	if (scene_assets_)
@@ -426,7 +426,7 @@ void Level_1_State::initHUDRubies()
 
 	float xSize = HUDrubyMesh->aabb().max_vtx().x() - HUDrubyMesh->aabb().min_vtx().x();
 	float ySize = HUDrubyMesh->aabb().max_vtx().y() - HUDrubyMesh->aabb().min_vtx().y();
-	rubyStartPosOffsetX = 3.0f;
+	rubyStartPosOffsetX = 6.0f;
 	rubyStartYPos = 7.0f;
 
 	hudRuby = new Ruby(gef::Vector4(player->getPosition()->x() + rubyStartPosOffsetX, rubyStartYPos, 0), gef::Vector4(4.0f, 4.0f, 4.0f), gef::Vector4(-1.5707f, 0, 0), true);
@@ -553,6 +553,9 @@ void Level_1_State::updateRubies(float dt)
 
 void Level_1_State::DrawHUD()
 {
+	// ACTUAL ON SCREEN GAME HUD STUFF
+	stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(1250.0f, 30.0f, -0.9f), 1.0f, 0xff000000, gef::TJ_LEFT, "COLLECTED: %i", player->getRubiesCollected());
+
 	if (isDebug)
 	{
 		if (stateMachine->getFont())

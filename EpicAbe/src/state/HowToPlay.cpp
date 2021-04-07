@@ -81,8 +81,8 @@ void HowToPlay::render()
 	gef::Sprite howToPlay;
 	howToPlay.set_texture(stateGraphic);
 	howToPlay.set_position(stateMachine->getPlatform().width() * 0.5f, stateMachine->getPlatform().height() * 0.5f, -0.99f);
-	howToPlay.set_height(1125.0f);
-	howToPlay.set_width(2000.0f);
+	howToPlay.set_height(810);
+	howToPlay.set_width(1440);
 	stateMachine->getSpriteRenderer()->DrawSprite(howToPlay);
 
 	stateMachine->getSpriteRenderer()->End();
