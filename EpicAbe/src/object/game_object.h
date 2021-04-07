@@ -14,7 +14,7 @@ class b2Body;
 
 enum class ObjectType
 {
-	UNDEFINED, PLAYER, ENEMY, ENVIRONMENT
+	UNDEFINED, PLAYER, ENEMY, ENVIRONMENT, COLLECTABLE
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

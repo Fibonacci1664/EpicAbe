@@ -37,6 +37,9 @@ Level_1_State::Level_1_State(StateMachine* sm)
 	isPaused = false;
 	quitGame = false;
 	isDebug = true;
+	rubyStartPosOffsetX = 0;
+	rubyStartYPos = 0;
+	rotation = 0;
 
 	initLevel();
 }
@@ -67,6 +70,9 @@ Level_1_State::~Level_1_State()
 	delete ruby;
 	ruby = nullptr;
 
+	delete hudRuby;
+	hudRuby = nullptr;
+
 	delete player;
 	player = nullptr;
 
@@ -90,8 +96,8 @@ void Level_1_State::initLevel()
 	initLevelEndDoor();
 	initGround();
 	initEnvPlatforms();
-	initRubies();
 	initPlayer();
+	initRubies();	
 	initEnemy();
 	SetupLights();
 }
@@ -130,6 +136,7 @@ bool Level_1_State::update(float dt)
 	//stateTimer += dt;
 
 	totalTimeElapsed += dt;
+	rotation += dt;
 
 	if (!isPaused)
 	{
@@ -158,9 +165,9 @@ bool Level_1_State::update(float dt)
 	player->update(dt, stateMachine->getPhysicsWorld());
 	ground->update(dt);
 	smallPlatform->update(dt);
-	ruby->update(dt);
+	updateRubies(dt);
 	largePillar->update(dt);
-
+	
 	for (int i = 0; i < enemies.size(); ++i)
 	{
 		enemies[i]->update(dt);
@@ -190,6 +197,7 @@ void Level_1_State::render()
 	ground->render(stateMachine->get3DRenderer());
 	smallPlatform->render(stateMachine->get3DRenderer());
 	ruby->render(stateMachine->get3DRenderer());
+	hudRuby->render(stateMachine->get3DRenderer());
 	stateMachine->getSpriteRenderer()->End();
 
 	// start drawing sprites, but don't clear the frame buffer
@@ -375,6 +383,14 @@ void Level_1_State::initEnvPlatforms()
 
 void Level_1_State::initRubies()
 {
+	initCollectableRubies();
+	initHUDRubies();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Level_1_State::initCollectableRubies()
+{
 	loadAsset("ruby.scn");
 
 	gef::Mesh* rubyMesh = GetMeshFromSceneAssets(scene_assets_);
@@ -382,7 +398,7 @@ void Level_1_State::initRubies()
 	float xSize = rubyMesh->aabb().max_vtx().x() - rubyMesh->aabb().min_vtx().x();
 	float ySize = rubyMesh->aabb().max_vtx().y() - rubyMesh->aabb().min_vtx().y();
 
-	ruby = new Ruby(gef::Vector4(45.5f, 1.5f, 0), gef::Vector4(2.0f, 2.0f, 2.0f), gef::Vector4(-1.5707f, 0, 0));
+	ruby = new Ruby(gef::Vector4(45.5f, 1.5f, 0), gef::Vector4(2.0f, 2.0f, 2.0f), gef::Vector4(-1.5707f, 0, 0), false);
 	ruby->initRuby(stateMachine->getPhysicsWorld(), xSize, ySize);
 
 	if (scene_assets_)
@@ -392,6 +408,32 @@ void Level_1_State::initRubies()
 	else
 	{
 		gef::DebugOut("Ruby model failed to load\n");
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Level_1_State::initHUDRubies()
+{
+	loadAsset("ruby.scn");
+
+	gef::Mesh* HUDrubyMesh = GetMeshFromSceneAssets(scene_assets_);
+
+	float xSize = HUDrubyMesh->aabb().max_vtx().x() - HUDrubyMesh->aabb().min_vtx().x();
+	float ySize = HUDrubyMesh->aabb().max_vtx().y() - HUDrubyMesh->aabb().min_vtx().y();
+	rubyStartPosOffsetX = 3.0f;
+	rubyStartYPos = 7.0f;
+
+	hudRuby = new Ruby(gef::Vector4(player->getPosition()->x() + rubyStartPosOffsetX, rubyStartYPos, 0), gef::Vector4(4.0f, 4.0f, 4.0f), gef::Vector4(-1.5707f, 0, 0), true);
+	//hudRuby->initRuby(stateMachine->getPhysicsWorld(), xSize, ySize);
+
+	if (scene_assets_)
+	{
+		hudRuby->set_mesh(HUDrubyMesh);
+	}
+	else
+	{
+		gef::DebugOut("HUD ruby model failed to load\n");
 	}
 }
 
@@ -473,24 +515,30 @@ void Level_1_State::SetupLights()
 	default_point_light.set_colour(gef::Colour(0.7f, 0.7f, 1.0f, 1.0f));
 	default_point_light.set_position(gef::Vector4(-500.0f, 400.0f, 700.0f));
 	default_shader_data.AddPointLight(default_point_light);
-
-	/*playerLight.set_colour(gef::Colour(0.706f, 0.754f, 1.0f, 1.0f));
-	playerLight.set_position(gef::Vector4(player->getPosition()->x(), player->getPosition()->y() + 1, 0));
-	default_shader_data.AddPointLight(playerLight);*/
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Level_1_State::updateCamera()
 {
-	gef::Vector4 camPos = gef::Vector4(player->getPosition()->x(), 2.5f, player->getPosition()->z() + 12.0f);
-	gef::Vector4 camLookAt = gef::Vector4(player->getPosition()->x(), 0, -1000000.0f);
-	gef::Vector4 camUp = gef::Vector4(0.0f, 1.0f, 0.0f);
+	camPos = gef::Vector4(player->getPosition()->x(), 2.5f, player->getPosition()->z() + 12.0f);
+	camLookAt = gef::Vector4(player->getPosition()->x(), 0, -1000000.0f);
+	camUp = gef::Vector4(0.0f, 1.0f, 0.0f);
 
 	view_matrix.LookAt(camPos, camLookAt, camUp);
 
 	stateMachine->get3DRenderer()->set_projection_matrix(projection_matrix);
 	stateMachine->get3DRenderer()->set_view_matrix(view_matrix);
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Level_1_State::updateRubies(float dt)
+{
+	ruby->update(dt);
+
+	hudRuby->setPosition(gef::Vector4(player->getPosition()->x() + rubyStartPosOffsetX, rubyStartYPos, 0));
+	hudRuby->setRotation(gef::Vector4(-1.5707f, rotation, 0));
+	hudRuby->update(dt);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

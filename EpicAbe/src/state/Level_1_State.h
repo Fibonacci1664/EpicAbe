@@ -63,12 +63,15 @@ private:
 	void initGround();
 	void initEnvPlatforms();
 	void initRubies();
+	void initCollectableRubies();
+	void initHUDRubies();
 	void initDunes();
 	void initBackground();
 	void initForeground();
 	void initLargePillar();
 	void initLevelEndDoor();
 	void updateCamera();
+	void updateRubies(float dt);
 	void DrawHUD();
 	void SetupLights();
 
@@ -81,6 +84,10 @@ private:
 	// CAMERA STUFF
 	gef::Matrix44 projection_matrix;
 	gef::Matrix44 view_matrix;
+
+	gef::Vector4 camPos;
+	gef::Vector4 camLookAt;
+	gef::Vector4 camUp;
 
 	// DUNES STUFF
 	Dunes* dunes;
@@ -105,6 +112,12 @@ private:
 
 	// COLLECTABLE RUBY STUFF
 	Ruby* ruby;
+
+	// HUD RUBY STUFF
+	Ruby* hudRuby;
+	float rubyStartPosOffsetX;
+	float rubyStartYPos;
+	float rotation;
 
 	// PLAYER STUFF
 	Player* player;

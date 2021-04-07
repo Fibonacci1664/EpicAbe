@@ -129,7 +129,7 @@ void Game::initWorld()
 	// initialise the physics world
 	velocityIterations = 6;
 	positionIterations = 2;
-	b2Vec2 gravity(0.0f, -9.81);
+	b2Vec2 gravity(0.0f, -9.81f);
 	world_ = new b2World(gravity);
 }
 

@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "../collectable/Ruby.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -191,12 +192,14 @@ void Player::checkCollisions(float dt, b2World* world_)
 			// Make sure both are not null.
 			if (objectA && objectB)
 			{
+				// Check for collisions with enemy
 				if (*objectA->getType() == ObjectType::ENEMY && *objectB->getType() == ObjectType::PLAYER
 					|| *objectB->getType() == ObjectType::ENEMY && *objectA->getType() == ObjectType::PLAYER)
 				{
 					playerHealth = (playerHealth - 1) * dt;
 				}
 				
+				// Check for collisions with ground
 				if (*objectA->getType() == ObjectType::ENVIRONMENT && *objectB->getType() == ObjectType::PLAYER
 					|| *objectB->getType() == ObjectType::ENVIRONMENT && *objectA->getType() == ObjectType::PLAYER)
 				{
@@ -205,6 +208,34 @@ void Player::checkCollisions(float dt, b2World* world_)
 				}
 
 				// Set for collisions with collectable
+				if (*objectA->getType() == ObjectType::COLLECTABLE && *objectB->getType() == ObjectType::PLAYER
+					|| *objectB->getType() == ObjectType::COLLECTABLE && *objectA->getType() == ObjectType::PLAYER)
+				{
+					if (*objectA->getType() == ObjectType::COLLECTABLE)
+					{
+						// play sfx
+						
+
+						// call destructor on obj
+						objectA->~GameObject();
+					}
+					else if (*objectB->getType() == ObjectType::COLLECTABLE)
+					{
+						// play sfx
+						
+						// This is fine, this gets me access to the same ruby object.
+						// HOW DO I DELETE IT THOUGH?
+						// maybe dont delete as that causes problems but instead
+						// have it dead or alive and then only update and render based on ifAlive.
+						Ruby* ruby = reinterpret_cast<Ruby*>(bodyB->GetUserData().pointer);
+						// call destructor on obj?
+
+						/*delete ruby->mesh();
+						ruby->set_mesh(nullptr);
+						delete ruby;
+						ruby = nullptr;*/
+					}
+				}
 			}
 		}
 		else
