@@ -90,7 +90,10 @@ Player::Player(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation)
 	audioManager = nullptr;
 	playerSFXVolinfo = nullptr;
 	collectItemSFX = 0;
-	musicVolume = 0;
+	jumpSFX = 0;
+	hurtSFX = 0;
+
+	stateTimer = 0;
 }
 
 Player::~Player()
@@ -130,6 +133,8 @@ void Player::handleInput(float dt)
 
 bool Player::update(float dt, b2World* world_)
 {
+	stateTimer += dt;
+
 	if (playerSkinnedMesh)
 	{
 		// update the pose in the anim player from the animation
@@ -146,14 +151,16 @@ bool Player::update(float dt, b2World* world_)
 		animationPlayer.set_playback_speed(0.75);
 	}
 
-	if (collisionTimer > 2.0f)
+	if (collisionTimer > 2.0f || stateTimer > 2.0f)
 	{
 		canCollideAgain = true;
 		collisionTimer = 0;
+		stateTimer = 0;
 	}
 
 	if (collidedWithEnemy)
 	{
+		audioManager->PlaySample(hurtSFX, false);
 		--lives;
 		collidedWithEnemy = false;
 		canCollideAgain = false;
@@ -497,6 +504,8 @@ void Player::jump(float dt)
 	isJumping = true;
 	onGround = false;
 
+	audioManager->PlaySample(jumpSFX, false);
+
 	animationPlayer.set_clip(jumpAnimation);
 	animationPlayer.set_anim_time(animationPlayer.clip()->start_time());
 
@@ -545,9 +554,11 @@ void Player::initAudio(gef::AudioManager* audioMan, gef::Platform& thePlatform)
 	audioManager = audioMan;
 
 	collectItemSFX = audioManager->LoadSample("../media/itemCollect.wav", thePlatform);
+	jumpSFX = audioManager->LoadSample("../media/jump.wav", thePlatform);
+	hurtSFX = audioManager->LoadSample("../media/hurt.wav", thePlatform);
 
 	playerSFXVolinfo = new gef::VolumeInfo();
-	playerSFXVolinfo->volume = 100;
+	playerSFXVolinfo->volume = 75;
 	audioManager->SetMusicVolumeInfo(*playerSFXVolinfo);
 }
 

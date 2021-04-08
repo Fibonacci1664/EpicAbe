@@ -164,8 +164,11 @@ private:
 	// AUDIO STUFF
 	gef::AudioManager* audioManager;
 	Int32 collectItemSFX;
+	Int32 jumpSFX;
+	Int32 hurtSFX;
 	gef::VolumeInfo* playerSFXVolinfo;
-	float musicVolume;
+
+	float stateTimer;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
