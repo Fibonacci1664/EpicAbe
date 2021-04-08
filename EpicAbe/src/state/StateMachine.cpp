@@ -8,6 +8,7 @@
 #include "PauseState.h"
 #include "OptionsState.h"
 #include "HowToPlay.h"
+#include "GameOver.h"
 #include "../../Game.h"
 #include "system/platform.h"
 
@@ -21,23 +22,28 @@
 // CONSTRUCTOR / DESTRUCTOR
 StateMachine::StateMachine(gef::Platform& platform_) : platform(platform_)
 {
-	howToPlay = nullptr;
-	level_1_state = nullptr;
-	level_1_intro_state = nullptr;
-	levelComplete = nullptr;
-	mainMenuState = nullptr;
-	optionsState = nullptr;
-	pauseState = nullptr;
 	splashState = nullptr;
+	mainMenuState = nullptr;
+	level_1_intro_state = nullptr;
+	level_1_state = nullptr;
+	levelCompleteState = nullptr;
+	pauseState = nullptr;
+	optionsState = nullptr;
+	howToPlayState = nullptr;
+	gameOverState = nullptr;	
 	currentState = nullptr;
+
 	sprRend = nullptr;
 	renderer3D = nullptr;
 	font = nullptr;
+
 	input_manager_ = nullptr;
 	sc_ = nullptr;
 	scim_ = nullptr;
+
 	theWorld = nullptr;
 	game = nullptr;
+
 	audioManager = nullptr;
 }
 
@@ -49,14 +55,14 @@ StateMachine::~StateMachine()
 	delete mainMenuState;
 	mainMenuState = nullptr;
 
-	delete level_1_state;
-	level_1_state = nullptr;
-
 	delete level_1_intro_state;
 	level_1_intro_state = nullptr;
 
-	delete levelComplete;
-	levelComplete = nullptr;
+	delete level_1_state;
+	level_1_state = nullptr;
+
+	delete levelCompleteState;
+	levelCompleteState = nullptr;
 
 	delete pauseState;
 	pauseState = nullptr;
@@ -64,8 +70,11 @@ StateMachine::~StateMachine()
 	delete optionsState;
 	optionsState = nullptr;
 
-	delete howToPlay;
-	howToPlay = nullptr;
+	delete howToPlayState;
+	howToPlayState = nullptr;
+
+	delete gameOverState;
+	gameOverState = nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -139,10 +148,11 @@ void StateMachine::initStates()
 	mainMenuState = new MenuState(this);
 	level_1_intro_state = new Level_1_Intro(this);
 	level_1_state = new Level_1_State(this);
-	levelComplete = new LevelComplete(this);
+	levelCompleteState = new LevelComplete(this);
 	pauseState = new PauseState(this);
 	optionsState = new OptionsState(this);
-	howToPlay = new HowToPlay(this);
+	howToPlayState = new HowToPlay(this);
+	gameOverState = new GameOver(this);
 
 	currentState = splashState;
 	initStateMap();
@@ -157,10 +167,11 @@ void StateMachine::initStateMap()
 	states.insert(std::make_pair("MainMenu", mainMenuState));
 	states.insert(std::make_pair("Level_1_Intro", level_1_intro_state));
 	states.insert(std::make_pair("Level_1", level_1_state));
-	states.insert(std::make_pair("LevelComplete", levelComplete));
+	states.insert(std::make_pair("LevelComplete", levelCompleteState));
 	states.insert(std::make_pair("PauseMenu", pauseState));
 	states.insert(std::make_pair("Options", optionsState));
-	states.insert(std::make_pair("HowToPlay", howToPlay));
+	states.insert(std::make_pair("HowToPlay", howToPlayState));
+	states.insert(std::make_pair("GameOver", gameOverState));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

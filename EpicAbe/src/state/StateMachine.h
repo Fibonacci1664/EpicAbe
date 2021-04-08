@@ -16,6 +16,7 @@ class OptionsState;
 class HowToPlay;
 class b2World;
 class Game;
+class GameOver;
 
 namespace gef
 {
@@ -60,20 +61,22 @@ public:
 	Game* getGame();
 	gef::AudioManager* getAudioManager();
 
-	SplashState* splashState;
-	MenuState* mainMenuState;
-	Level_1_Intro* level_1_intro_state;
-	Level_1_State* level_1_state;
-	LevelComplete* levelComplete;
-	PauseState* pauseState;
-	OptionsState* optionsState;
-	HowToPlay* howToPlay;
-
 private:
 	
 	void initStateMap();
 
+	SplashState* splashState;
+	MenuState* mainMenuState;
+	Level_1_Intro* level_1_intro_state;
+	Level_1_State* level_1_state;
+	LevelComplete* levelCompleteState;
+	PauseState* pauseState;
+	OptionsState* optionsState;
+	HowToPlay* howToPlayState;
+	GameOver* gameOverState;
+
 	GameState* currentState;
+
 	gef::Platform& platform;
 	gef::SpriteRenderer* sprRend;
 	gef::Renderer3D* renderer3D;
@@ -82,8 +85,10 @@ private:
 	gef::InputManager* input_manager_;
 	const gef::SonyController* sc_;
 	gef::SonyControllerInputManager* scim_;
+
 	b2World* theWorld;
 	Game* game;
+
 	gef::AudioManager* audioManager;
 
 	std::map<std::string, GameState*> states;

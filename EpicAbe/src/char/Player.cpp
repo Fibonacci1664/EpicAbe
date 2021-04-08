@@ -35,6 +35,9 @@ Player::Player(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation)
 	// COLLISION STUFF
 	bodyA = nullptr;
 	bodyB = nullptr;
+	collisionTimer = 0;
+	recoveryTimer = 0;
+	canCollideAgain = true;
 
 	// ANIMATION STUFF
 	idleAnimation = nullptr;
@@ -73,14 +76,15 @@ Player::Player(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation)
 	speed = 50;
 	maxSpeed = 3;
 	jumpForce = 60.0f;		// THIS NEEDS TO BE SET V LOW IF USING IMPULSE.
-	playerHealth = 10;
+	lives = 3;
 	onGround = false;
 	hasCollided = false;
+	collidedWithEnemy = false;
 	facingLeft = false;
 	facingRight = true;
 	isJumping = false;
 	isMoving = false;
-	rubiesCollected = 0;
+	rubiesCollected = 0;	
 
 	// AUDIO STUFF
 	audioManager = nullptr;
@@ -105,6 +109,9 @@ Player::~Player()
 
 	delete jumpAnimation;
 	jumpAnimation = nullptr;
+
+	delete playerSFXVolinfo;
+	playerSFXVolinfo = nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,6 +144,19 @@ bool Player::update(float dt, b2World* world_)
 	{
 		animationPlayer.set_looping(true);
 		animationPlayer.set_playback_speed(0.75);
+	}
+
+	if (collisionTimer > 2.0f)
+	{
+		canCollideAgain = true;
+		collisionTimer = 0;
+	}
+
+	if (collidedWithEnemy)
+	{
+		--lives;
+		collidedWithEnemy = false;
+		canCollideAgain = false;
 	}
 
 	checkCollisions(dt, world_);
@@ -204,7 +224,12 @@ void Player::checkCollisions(float dt, b2World* world_)
 				if (*objectA->getType() == ObjectType::ENEMY && *objectB->getType() == ObjectType::PLAYER
 					|| *objectB->getType() == ObjectType::ENEMY && *objectA->getType() == ObjectType::PLAYER)
 				{
-					playerHealth = (playerHealth - 1) * dt;
+					collisionTimer += dt;
+
+					if (canCollideAgain)
+					{
+						collidedWithEnemy = true;
+					}					
 				}
 				
 				// Check for collisions with ground
@@ -219,15 +244,7 @@ void Player::checkCollisions(float dt, b2World* world_)
 				if (*objectA->getType() == ObjectType::COLLECTABLE && *objectB->getType() == ObjectType::PLAYER
 					|| *objectB->getType() == ObjectType::COLLECTABLE && *objectA->getType() == ObjectType::PLAYER)
 				{
-					if (*objectA->getType() == ObjectType::COLLECTABLE)
-					{
-						// play sfx
-						
-
-						// call destructor on obj
-						objectA->~GameObject();
-					}
-					else if (*objectB->getType() == ObjectType::COLLECTABLE)
+					if (*objectB->getType() == ObjectType::COLLECTABLE)
 					{
 						// play sfx
 						audioManager->PlaySample(collectItemSFX, false);
@@ -709,9 +726,9 @@ b2Body* Player::getPlayerBody()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-int Player::getPlayerHealth()
+int Player::getLives()
 {
-	return playerHealth;
+	return lives;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

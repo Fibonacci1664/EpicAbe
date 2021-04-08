@@ -66,7 +66,7 @@ public:
 	b2Body* getCollidingBodyA();
 	b2Body* getCollidingBodyB();
 	b2Body* getPlayerBody();
-	int getPlayerHealth();
+	int getLives();
 	bool isOnGround();
 	bool getIsFacingLeft();
 	bool getIsFacingRight();
@@ -145,17 +145,21 @@ private:
 	float maxSpeed;
 	float jumpForce;
 	bool onGround;
-	int playerHealth;
+	int lives;
 	bool facingLeft;
 	bool facingRight;
 	bool isJumping;
 	bool isMoving;
 	int rubiesCollected;
+	bool hasCollided;
+	bool collidedWithEnemy;
 
 	// COLLISION STUFF
 	b2Body* bodyA;
 	b2Body* bodyB;
-	bool hasCollided;
+	float collisionTimer;
+	float recoveryTimer;
+	bool canCollideAgain;
 
 	// AUDIO STUFF
 	gef::AudioManager* audioManager;

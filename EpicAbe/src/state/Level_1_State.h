@@ -34,6 +34,7 @@ class Player;
 class Enemy;
 class EnvPlatform;
 class Ruby;
+class Heart;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -65,6 +66,7 @@ private:
 	void initRubies();
 	void initCollectableRubies();
 	void initHUDRubies();
+	void initHUDHearts();
 	void initDunes();
 	void initBackground();
 	void initForeground();
@@ -72,6 +74,7 @@ private:
 	void initLevelEndDoor();
 	void updateCamera();
 	void updateRubies(float dt);
+	void updateHearts(float dt);
 	void DrawHUD();
 	void SetupLights();
 
@@ -113,11 +116,17 @@ private:
 	// COLLECTABLE RUBY STUFF
 	Ruby* ruby;
 
+	// HUD STUFF GENERAL
+	float startYPos;
+	float rotation;
+
 	// HUD RUBY STUFF
 	Ruby* hudRuby;
 	float rubyStartPosOffsetX;
-	float rubyStartYPos;
-	float rotation;
+	
+	// HUD HEART STUFF
+	Heart* hudHeart;
+	float heartStartPosOffsetX;
 
 	// PLAYER STUFF
 	Player* player;

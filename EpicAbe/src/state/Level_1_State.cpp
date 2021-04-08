@@ -7,6 +7,7 @@
 #include "../env/Ground.h"
 #include "../env/EnvPlatform.h"
 #include "../collectable/Ruby.h"
+#include "../hud/Heart.h"
 #include "../env/LevelEndDoor.h"
 #include "../env/Background.h"
 #include "../env/Foreground.h"
@@ -38,7 +39,8 @@ Level_1_State::Level_1_State(StateMachine* sm)
 	quitGame = false;
 	isDebug = true;
 	rubyStartPosOffsetX = 0;
-	rubyStartYPos = 0;
+	heartStartPosOffsetX = 0;
+	startYPos = 7.0f;
 	rotation = 0;
 
 	initLevel();
@@ -73,6 +75,9 @@ Level_1_State::~Level_1_State()
 	delete hudRuby;
 	hudRuby = nullptr;
 
+	delete hudHeart;
+	hudHeart = nullptr;
+
 	delete player;
 	player = nullptr;
 
@@ -97,7 +102,8 @@ void Level_1_State::initLevel()
 	initGround();
 	initEnvPlatforms();
 	initPlayer();
-	initRubies();	
+	initRubies();
+	initHUDHearts();
 	initEnemy();
 	SetupLights();
 }
@@ -136,13 +142,14 @@ bool Level_1_State::update(float dt)
 	//stateTimer += dt;
 
 	totalTimeElapsed += dt;
-	rotation += dt;
+	rotation += dt;		// Rotate the hud icons
 
 	if (!isPaused)
 	{
 		stateTimer += dt;
 	}
 
+	// CHECK VARIOUS STATE POTENTIALS
 	if (isPaused)
 	{
 		stateMachine->setState("PauseMenu");
@@ -155,6 +162,13 @@ bool Level_1_State::update(float dt)
 		return false;
 	}
 
+	if (player->getLives() == 0)
+	{
+		stateMachine->setState("GameOver");
+		return false;
+	}
+	// END CHECKING STATE POTENTIALS
+
 	fps = 1.0f / dt;
 
 	updateCamera();
@@ -166,6 +180,7 @@ bool Level_1_State::update(float dt)
 	ground->update(dt);
 	smallPlatform->update(dt);
 	updateRubies(dt);
+	updateHearts(dt);
 	largePillar->update(dt);
 	
 	for (int i = 0; i < enemies.size(); ++i)
@@ -201,8 +216,15 @@ void Level_1_State::render()
 	{
 		ruby->render(stateMachine->get3DRenderer());
 	}
+
+	// NOT BUILT YET!
+	/*if (heart->getIsAlive())
+	{
+		heart->render(stateMachine->get3DRenderer());
+	}*/
 	
 	hudRuby->render(stateMachine->get3DRenderer());
+	hudHeart->render(stateMachine->get3DRenderer());
 	stateMachine->getSpriteRenderer()->End();
 
 	// start drawing sprites, but don't clear the frame buffer
@@ -424,13 +446,9 @@ void Level_1_State::initHUDRubies()
 
 	gef::Mesh* HUDrubyMesh = GetMeshFromSceneAssets(scene_assets_);
 
-	float xSize = HUDrubyMesh->aabb().max_vtx().x() - HUDrubyMesh->aabb().min_vtx().x();
-	float ySize = HUDrubyMesh->aabb().max_vtx().y() - HUDrubyMesh->aabb().min_vtx().y();
 	rubyStartPosOffsetX = 6.0f;
-	rubyStartYPos = 7.0f;
 
-	hudRuby = new Ruby(gef::Vector4(player->getPosition()->x() + rubyStartPosOffsetX, rubyStartYPos, 0), gef::Vector4(4.0f, 4.0f, 4.0f), gef::Vector4(-1.5707f, 0, 0), true);
-	//hudRuby->initRuby(stateMachine->getPhysicsWorld(), xSize, ySize);
+	hudRuby = new Ruby(gef::Vector4(player->getPosition()->x() + rubyStartPosOffsetX, startYPos, 0), gef::Vector4(4.0f, 4.0f, 4.0f), gef::Vector4(-1.5707f, 0, 0), true);
 
 	if (scene_assets_)
 	{
@@ -439,6 +457,28 @@ void Level_1_State::initHUDRubies()
 	else
 	{
 		gef::DebugOut("HUD ruby model failed to load\n");
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Level_1_State::initHUDHearts()
+{
+	loadAsset("heart.scn");
+
+	gef::Mesh* HUDheartMesh = GetMeshFromSceneAssets(scene_assets_);
+
+	heartStartPosOffsetX = 8.2f;
+
+	hudHeart = new Heart(gef::Vector4(player->getPosition()->x() - heartStartPosOffsetX, startYPos, 0), gef::Vector4(4.0f, 4.0f, 4.0f), gef::Vector4(-1.5707f, 0, 0), true);
+
+	if (scene_assets_)
+	{
+		hudHeart->set_mesh(HUDheartMesh);
+	}
+	else
+	{
+		gef::DebugOut("HUD heart model failed to load\n");
 	}
 }
 
@@ -545,9 +585,24 @@ void Level_1_State::updateRubies(float dt)
 		ruby->update(dt);
 	}
 	
-	hudRuby->setPosition(gef::Vector4(player->getPosition()->x() + rubyStartPosOffsetX, rubyStartYPos, 0));
+	hudRuby->setPosition(gef::Vector4(player->getPosition()->x() + rubyStartPosOffsetX, startYPos, 0));
 	hudRuby->setRotation(gef::Vector4(-1.5707f, rotation, 0));
 	hudRuby->update(dt);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Level_1_State::updateHearts(float dt)
+{
+	// NOT BUILT YET!
+	/*if (!heart->getIsBodyDestroyed())
+	{
+		heart->update(dt);
+	}*/
+
+	hudHeart->setPosition(gef::Vector4(player->getPosition()->x() - heartStartPosOffsetX, startYPos, 0));
+	hudHeart->setRotation(gef::Vector4(-1.5707f, rotation, 0));
+	hudHeart->update(dt);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -556,6 +611,7 @@ void Level_1_State::DrawHUD()
 {
 	// ACTUAL ON SCREEN GAME HUD STUFF
 	stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(1250.0f, 30.0f, -0.9f), 1.0f, 0xff000000, gef::TJ_LEFT, "COLLECTED: %i", player->getRubiesCollected());
+	stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(90.0f, 30.0f, -0.9f), 1.0f, 0xff000000, gef::TJ_LEFT, "LIVES: %i", player->getLives());
 
 	if (isDebug)
 	{
@@ -590,7 +646,7 @@ void Level_1_State::DrawHUD()
 			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 420.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "leftStickAngle: %.1f", player->getLeftStickAngle());
 			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 435.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "Player Y-Pos: %.1f", player->getPlayerYPos());
 			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 450.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "Player grounded: %s", player->isOnGround() ? "True" : "False");
-			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 465.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "Player Health: %i", player->getPlayerHealth());
+			stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(10.0f, 465.0f, -0.9f), 0.5f, 0xff000000, gef::TJ_LEFT, "Player Health: %i", player->getLives());
 		}
 	}
 }
