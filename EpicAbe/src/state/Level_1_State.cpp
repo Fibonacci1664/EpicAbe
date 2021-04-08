@@ -453,6 +453,7 @@ void Level_1_State::initPlayer()
 							stateMachine->getSonyController());
 	player->initModelPlayer();
 	player->initPhysicsBody(stateMachine->getPhysicsWorld());
+	player->initAudio(stateMachine->getAudioManager(), stateMachine->getPlatform());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

@@ -34,9 +34,9 @@ Game::Game(gef::Platform& platform) :
 {
 
 	audioManager = nullptr;
-	sampleMusic = 0;
+	gameMusic = 0;
 	//sampleSound = 0;
-	volumeInfoControl = nullptr;
+	gameMusicVolinfo = nullptr;
 	musicVolume = 1.0f;
 }
 
@@ -53,8 +53,8 @@ void Game::Init()
 	initFont();
 	initWorld();
 	initInputManager();
-	initStateMachine();
 	initAudio();
+	initStateMachine();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,8 +70,8 @@ void Game::CleanUp()
 	delete stateMachine;
 	stateMachine = nullptr;
 
-	delete volumeInfoControl;
-	volumeInfoControl = nullptr;
+	delete gameMusicVolinfo;
+	gameMusicVolinfo = nullptr;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -147,7 +147,7 @@ void Game::initInputManager()
 void Game::initStateMachine()
 {
 	stateMachine = new StateMachine(platform_);
-	stateMachine->initGameWorld(platform_, this, world_);
+	stateMachine->initGameWorld(this, world_, audioManager);
 	stateMachine->initRend(sprite_renderer_, renderer_3d_, font_);
 	stateMachine->initInputControl(im, controller, scim);
 	stateMachine->initStates();	
@@ -159,12 +159,12 @@ void Game::initAudio()
 {
 	// initialise audio manager
 	audioManager = gef::AudioManager::Create();
-	//sampleSound = audioManager->LoadSample("../media/box_collected.wav", stateMachine->getPlatform());
-	sampleMusic = audioManager->LoadMusic("desertLoop.wav", stateMachine->getPlatform());
+	//sampleSound = audioManager->LoadSample("../media/box_collected.wav", platfrom_);
+	gameMusic = audioManager->LoadMusic("desertLoop.wav", platform_);
 
-	volumeInfoControl = new gef::VolumeInfo();
-	volumeInfoControl->volume = 50;
-	audioManager->SetMusicVolumeInfo(*volumeInfoControl);
+	gameMusicVolinfo = new gef::VolumeInfo();
+	gameMusicVolinfo->volume = 50;
+	audioManager->SetMusicVolumeInfo(*gameMusicVolinfo);
 
 	audioManager->PlayMusic();
 }
@@ -174,15 +174,15 @@ void Game::initAudio()
 // GETTERS/ SETTERS
 float Game::getGameVolume()
 {
-	return volumeInfoControl->volume;
+	return gameMusicVolinfo->volume;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Game::setGameVolume(float newVol)
 {
-	volumeInfoControl->volume = newVol;
-	audioManager->SetMusicVolumeInfo(*volumeInfoControl);
+	gameMusicVolinfo->volume = newVol;
+	audioManager->SetMusicVolumeInfo(*gameMusicVolinfo);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

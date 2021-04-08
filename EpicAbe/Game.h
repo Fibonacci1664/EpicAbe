@@ -71,8 +71,8 @@ private:
 	// AUDIO STUFF
 	gef::AudioManager* audioManager;
 	//Int32 sampleSound;
-	Int32 sampleMusic;
-	gef::VolumeInfo* volumeInfoControl;
+	Int32 gameMusic;
+	gef::VolumeInfo* gameMusicVolinfo;
 	float musicVolume;
 
 	float fps_;

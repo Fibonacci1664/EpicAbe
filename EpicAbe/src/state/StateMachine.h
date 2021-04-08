@@ -26,6 +26,7 @@ namespace gef
 	class InputManager;
 	class SonyController;
 	class SonyControllerInputManager;
+	class AudioManager;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,7 +37,7 @@ public:
 	StateMachine(gef::Platform& platform_);
 	~StateMachine();
 
-	void initGameWorld(gef::Platform& platform_, Game* theGame, b2World* world);
+	void initGameWorld(Game* theGame, b2World* world, gef::AudioManager* audioMan);
 	void initRend(gef::SpriteRenderer* spRend, gef::Renderer3D* rend3D, gef::Font* font_);
 	void initInputControl(gef::InputManager* im, const gef::SonyController* sc, gef::SonyControllerInputManager* scim);
 	void initStates();
@@ -57,6 +58,7 @@ public:
 	b2World* getPhysicsWorld();
 	gef::Renderer3D* get3DRenderer();
 	Game* getGame();
+	gef::AudioManager* getAudioManager();
 
 	SplashState* splashState;
 	MenuState* mainMenuState;
@@ -82,6 +84,7 @@ private:
 	gef::SonyControllerInputManager* scim_;
 	b2World* theWorld;
 	Game* game;
+	gef::AudioManager* audioManager;
 
 	std::map<std::string, GameState*> states;
 };

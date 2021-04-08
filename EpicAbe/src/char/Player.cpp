@@ -8,6 +8,7 @@
 #include <graphics/skinned_mesh_instance.h>
 #include <animation/animation.h>
 #include <graphics/mesh.h>
+#include <audio/audio_manager.h>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -80,6 +81,12 @@ Player::Player(gef::Vector4 position, gef::Vector4 scale, gef::Vector4 rotation)
 	isJumping = false;
 	isMoving = false;
 	rubiesCollected = 0;
+
+	// AUDIO STUFF
+	audioManager = nullptr;
+	playerSFXVolinfo = nullptr;
+	collectItemSFX = 0;
+	musicVolume = 0;
 }
 
 Player::~Player()
@@ -223,7 +230,8 @@ void Player::checkCollisions(float dt, b2World* world_)
 					else if (*objectB->getType() == ObjectType::COLLECTABLE)
 					{
 						// play sfx
-						
+						audioManager->PlaySample(collectItemSFX, false);
+
 						// This is fine, this gets me access to the same ruby object.
 						Ruby* ruby = reinterpret_cast<Ruby*>(bodyB->GetUserData().pointer);
 						ruby->setIsAlive(false);
@@ -511,6 +519,19 @@ void Player::initPhysicsBody(b2World* world)
 
 	// Create and attach the players fixture.
 	playerBody->CreateFixture(&playerFixtureDef);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Player::initAudio(gef::AudioManager* audioMan, gef::Platform& thePlatform)
+{
+	audioManager = audioMan;
+
+	collectItemSFX = audioManager->LoadSample("../media/itemCollect.wav", thePlatform);
+
+	playerSFXVolinfo = new gef::VolumeInfo();
+	playerSFXVolinfo->volume = 100;
+	audioManager->SetMusicVolumeInfo(*playerSFXVolinfo);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

@@ -27,6 +27,9 @@ namespace gef
 	class InputManager;
 	class SonyControllerInputManager;
 	class SonyController;
+	class AudioManager;
+	class VolumeInfo;
+	class Platform;
 }
 
 class b2World;
@@ -50,6 +53,7 @@ public:
 		const gef::SonyController* controller);
 	void initModelPlayer();
 	void initPhysicsBody(b2World* world);
+	void initAudio(gef::AudioManager* audioMan, gef::Platform& thePlatform);
 
 	// GETTERS / SETTERS
 	void setButtonState();
@@ -152,6 +156,12 @@ private:
 	b2Body* bodyA;
 	b2Body* bodyB;
 	bool hasCollided;
+
+	// AUDIO STUFF
+	gef::AudioManager* audioManager;
+	Int32 collectItemSFX;
+	gef::VolumeInfo* playerSFXVolinfo;
+	float musicVolume;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

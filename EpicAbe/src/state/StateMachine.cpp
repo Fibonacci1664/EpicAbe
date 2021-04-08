@@ -38,6 +38,7 @@ StateMachine::StateMachine(gef::Platform& platform_) : platform(platform_)
 	scim_ = nullptr;
 	theWorld = nullptr;
 	game = nullptr;
+	audioManager = nullptr;
 }
 
 StateMachine::~StateMachine()
@@ -105,10 +106,11 @@ void StateMachine::render()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-void StateMachine::initGameWorld(gef::Platform& platform_, Game* theGame, b2World* world)
+void StateMachine::initGameWorld(Game* theGame, b2World* world, gef::AudioManager* audioMan)
 {
 	game = theGame;
 	theWorld = world;
+	audioManager = audioMan;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -239,6 +241,13 @@ gef::Renderer3D* StateMachine::get3DRenderer()
 Game* StateMachine::getGame()
 {
 	return game;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+gef::AudioManager* StateMachine::getAudioManager()
+{
+	return audioManager;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
