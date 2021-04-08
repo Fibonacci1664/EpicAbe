@@ -178,7 +178,7 @@ bool Level_1_State::update(float dt)
 
 	player->update(dt, stateMachine->getPhysicsWorld());
 	ground->update(dt);
-	smallPlatform->update(dt);
+	updatePlatforms(dt);
 	updateRubies(dt);
 	updateHearts(dt);
 	largePillar->update(dt);
@@ -210,7 +210,8 @@ void Level_1_State::render()
 	largePillar->render(stateMachine->get3DRenderer());
 	levelEndDoor->render(stateMachine->get3DRenderer());
 	ground->render(stateMachine->get3DRenderer());
-	smallPlatform->render(stateMachine->get3DRenderer());
+
+	renderPlatforms();
 
 	if (ruby->getIsAlive())
 	{
@@ -384,6 +385,8 @@ void Level_1_State::initGround()
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 void Level_1_State::initEnvPlatforms()
 {
 	loadAsset("smallPlatform.scn");
@@ -393,16 +396,89 @@ void Level_1_State::initEnvPlatforms()
 	float xSize = smallPlatformMesh->aabb().max_vtx().x() - smallPlatformMesh->aabb().min_vtx().x();
 	float ySize = smallPlatformMesh->aabb().max_vtx().y() - smallPlatformMesh->aabb().min_vtx().y();
 
-	smallPlatform = new EnvPlatform(gef::Vector4(45, 1.15f, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
-	smallPlatform->initEnvPlatform(stateMachine->getPhysicsWorld(), xSize, ySize);
+	initLowEnvPlatforms(smallPlatformMesh, xSize, ySize);
+	initMedEnvPlatforms(smallPlatformMesh, xSize, ySize);
+	initHighEnvPlatforms(smallPlatformMesh, xSize, ySize);
+}
 
-	if (scene_assets_)
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Level_1_State::initLowEnvPlatforms(gef::Mesh* smlPlatMesh, float sizeX, float sizeY)
+{
+	float lowPlatformIncrement = 0;
+
+	// Init low platforms
+	for (int i = 0; i < 5; ++i)
 	{
-		smallPlatform->set_mesh(smallPlatformMesh);
+		smallPlatform = new EnvPlatform(gef::Vector4(45 + lowPlatformIncrement, 1.15f, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+		smallPlatform->initEnvPlatform(stateMachine->getPhysicsWorld(), sizeX, sizeY);
+
+		if (scene_assets_)
+		{
+			smallPlatform->set_mesh(smlPlatMesh);
+		}
+		else
+		{
+			gef::DebugOut("Small platform model failed to load\n");
+		}
+
+		lowPlatforms.push_back(smallPlatform);
+
+		lowPlatformIncrement += 10.5f;
 	}
-	else
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Level_1_State::initMedEnvPlatforms(gef::Mesh* smlPlatMesh, float sizeX, float sizeY)
+{
+	float medPlatformIncrement = 0;
+
+	// Init low platforms
+	for (int i = 0; i < 5; ++i)
 	{
-		gef::DebugOut("Small platform model failed to load\n");
+		smallPlatform = new EnvPlatform(gef::Vector4(45 + medPlatformIncrement, 3.15f, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+		smallPlatform->initEnvPlatform(stateMachine->getPhysicsWorld(), sizeX, sizeY);
+
+		if (scene_assets_)
+		{
+			smallPlatform->set_mesh(smlPlatMesh);
+		}
+		else
+		{
+			gef::DebugOut("Small platform model failed to load\n");
+		}
+
+		lowPlatforms.push_back(smallPlatform);
+
+		medPlatformIncrement += 10.5f;
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Level_1_State::initHighEnvPlatforms(gef::Mesh* smlPlatMesh, float sizeX, float sizeY)
+{
+	float highPlatformIncrement = 0;
+
+	// Init low platforms
+	for (int i = 0; i < 5; ++i)
+	{
+		smallPlatform = new EnvPlatform(gef::Vector4(45 + highPlatformIncrement, 5.15f, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+		smallPlatform->initEnvPlatform(stateMachine->getPhysicsWorld(), sizeX, sizeY);
+
+		if (scene_assets_)
+		{
+			smallPlatform->set_mesh(smlPlatMesh);
+		}
+		else
+		{
+			gef::DebugOut("Small platform model failed to load\n");
+		}
+
+		lowPlatforms.push_back(smallPlatform);
+
+		highPlatformIncrement += 10.5f;
 	}
 }
 
@@ -603,6 +679,46 @@ void Level_1_State::updateHearts(float dt)
 	hudHeart->setPosition(gef::Vector4(player->getPosition()->x() - heartStartPosOffsetX, startYPos, 0));
 	hudHeart->setRotation(gef::Vector4(-1.5707f, rotation, 0));
 	hudHeart->update(dt);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Level_1_State::updatePlatforms(float dt)
+{
+	for (int i = 0; i < lowPlatforms.size(); ++i)
+	{
+		lowPlatforms[i]->update(dt);
+	}
+
+	for (int i = 0; i < medPlatforms.size(); ++i)
+	{
+		medPlatforms[i]->update(dt);
+	}
+
+	for (int i = 0; i < highPlatforms.size(); ++i)
+	{
+		highPlatforms[i]->update(dt);
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Level_1_State::renderPlatforms()
+{
+	for (int i = 0; i < lowPlatforms.size(); ++i)
+	{
+		lowPlatforms[i]->render(stateMachine->get3DRenderer());
+	}
+
+	for (int i = 0; i < medPlatforms.size(); ++i)
+	{
+		medPlatforms[i]->render(stateMachine->get3DRenderer());
+	}
+
+	for (int i = 0; i < highPlatforms.size(); ++i)
+	{
+		highPlatforms[i]->render(stateMachine->get3DRenderer());
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

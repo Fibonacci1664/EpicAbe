@@ -63,6 +63,9 @@ private:
 	void initEnemy();
 	void initGround();
 	void initEnvPlatforms();
+	void initLowEnvPlatforms(gef::Mesh* smlPlatMesh, float sizeX, float sizeY);
+	void initMedEnvPlatforms(gef::Mesh* smlPlatMesh, float sizeX, float sizeY);
+	void initHighEnvPlatforms(gef::Mesh* smlPlatMesh, float sizeX, float sizeY);
 	void initRubies();
 	void initCollectableRubies();
 	void initHUDRubies();
@@ -75,6 +78,8 @@ private:
 	void updateCamera();
 	void updateRubies(float dt);
 	void updateHearts(float dt);
+	void updatePlatforms(float dt);
+	void renderPlatforms();
 	void DrawHUD();
 	void SetupLights();
 
@@ -112,6 +117,9 @@ private:
 
 	// ENV PLATFORMS STUFF
 	EnvPlatform* smallPlatform;
+	std::vector<EnvPlatform*> lowPlatforms;
+	std::vector<EnvPlatform*> medPlatforms;
+	std::vector<EnvPlatform*> highPlatforms;
 
 	// COLLECTABLE RUBY STUFF
 	Ruby* ruby;
