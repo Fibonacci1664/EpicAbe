@@ -765,7 +765,7 @@ bool Player::getIsFacingRight()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool Player::getRubiesCollected()
+int Player::getRubiesCollected()
 {
 	return rubiesCollected;
 }

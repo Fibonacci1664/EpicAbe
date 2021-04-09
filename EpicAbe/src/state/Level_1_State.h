@@ -80,6 +80,7 @@ private:
 	void updateHearts(float dt);
 	void updatePlatforms(float dt);
 	void renderPlatforms();
+	void renderRubies();
 	void DrawHUD();
 	void SetupLights();
 
@@ -116,13 +117,14 @@ private:
 	Ground* ground;
 
 	// ENV PLATFORMS STUFF
-	EnvPlatform* smallPlatform;
+	EnvPlatform* platform;
 	std::vector<EnvPlatform*> lowPlatforms;
 	std::vector<EnvPlatform*> medPlatforms;
 	std::vector<EnvPlatform*> highPlatforms;
 
 	// COLLECTABLE RUBY STUFF
 	Ruby* ruby;
+	std::vector<Ruby*> rubies;
 
 	// HUD STUFF GENERAL
 	float startYPos;

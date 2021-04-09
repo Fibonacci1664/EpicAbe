@@ -66,8 +66,8 @@ Level_1_State::~Level_1_State()
 	delete ground;
 	ground = nullptr;
 
-	delete smallPlatform;
-	smallPlatform = nullptr;
+	delete platform;
+	platform = nullptr;
 
 	delete ruby;
 	ruby = nullptr;
@@ -212,11 +212,7 @@ void Level_1_State::render()
 	ground->render(stateMachine->get3DRenderer());
 
 	renderPlatforms();
-
-	if (ruby->getIsAlive())
-	{
-		ruby->render(stateMachine->get3DRenderer());
-	}
+	renderRubies();
 
 	// NOT BUILT YET!
 	/*if (heart->getIsAlive())
@@ -410,19 +406,19 @@ void Level_1_State::initLowEnvPlatforms(gef::Mesh* smlPlatMesh, float sizeX, flo
 	// Init low platforms
 	for (int i = 0; i < 5; ++i)
 	{
-		smallPlatform = new EnvPlatform(gef::Vector4(45 + lowPlatformIncrement, 1.15f, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
-		smallPlatform->initEnvPlatform(stateMachine->getPhysicsWorld(), sizeX, sizeY);
+		platform = new EnvPlatform(gef::Vector4(45 + lowPlatformIncrement, 1.15f, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+		platform->initEnvPlatform(stateMachine->getPhysicsWorld(), sizeX, sizeY);
 
 		if (scene_assets_)
 		{
-			smallPlatform->set_mesh(smlPlatMesh);
+			platform->set_mesh(smlPlatMesh);
 		}
 		else
 		{
 			gef::DebugOut("Small platform model failed to load\n");
 		}
 
-		lowPlatforms.push_back(smallPlatform);
+		lowPlatforms.push_back(platform);
 
 		lowPlatformIncrement += 10.5f;
 	}
@@ -437,19 +433,19 @@ void Level_1_State::initMedEnvPlatforms(gef::Mesh* smlPlatMesh, float sizeX, flo
 	// Init low platforms
 	for (int i = 0; i < 5; ++i)
 	{
-		smallPlatform = new EnvPlatform(gef::Vector4(45 + medPlatformIncrement, 3.15f, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
-		smallPlatform->initEnvPlatform(stateMachine->getPhysicsWorld(), sizeX, sizeY);
+		platform = new EnvPlatform(gef::Vector4(42 + medPlatformIncrement, 2.15f, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+		platform->initEnvPlatform(stateMachine->getPhysicsWorld(), sizeX, sizeY);
 
 		if (scene_assets_)
 		{
-			smallPlatform->set_mesh(smlPlatMesh);
+			platform->set_mesh(smlPlatMesh);
 		}
 		else
 		{
 			gef::DebugOut("Small platform model failed to load\n");
 		}
 
-		lowPlatforms.push_back(smallPlatform);
+		lowPlatforms.push_back(platform);
 
 		medPlatformIncrement += 10.5f;
 	}
@@ -464,19 +460,19 @@ void Level_1_State::initHighEnvPlatforms(gef::Mesh* smlPlatMesh, float sizeX, fl
 	// Init low platforms
 	for (int i = 0; i < 5; ++i)
 	{
-		smallPlatform = new EnvPlatform(gef::Vector4(45 + highPlatformIncrement, 5.15f, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
-		smallPlatform->initEnvPlatform(stateMachine->getPhysicsWorld(), sizeX, sizeY);
+		platform = new EnvPlatform(gef::Vector4(46 + highPlatformIncrement, 3, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
+		platform->initEnvPlatform(stateMachine->getPhysicsWorld(), sizeX, sizeY);
 
 		if (scene_assets_)
 		{
-			smallPlatform->set_mesh(smlPlatMesh);
+			platform->set_mesh(smlPlatMesh);
 		}
 		else
 		{
 			gef::DebugOut("Small platform model failed to load\n");
 		}
 
-		lowPlatforms.push_back(smallPlatform);
+		lowPlatforms.push_back(platform);
 
 		highPlatformIncrement += 10.5f;
 	}
@@ -500,17 +496,26 @@ void Level_1_State::initCollectableRubies()
 
 	float xSize = rubyMesh->aabb().max_vtx().x() - rubyMesh->aabb().min_vtx().x();
 	float ySize = rubyMesh->aabb().max_vtx().y() - rubyMesh->aabb().min_vtx().y();
+	float rubyIncrement = 0;
 
-	ruby = new Ruby(gef::Vector4(45.5f, 1.65f, 0), gef::Vector4(2.0f, 2.0f, 2.0f), gef::Vector4(-1.5707f, 0, 0), false);
-	ruby->initRuby(stateMachine->getPhysicsWorld(), xSize, ySize);
+	// Init rubies above high platforms
+	for (int i = 0; i < 5; ++i)
+	{
+		ruby = new Ruby(gef::Vector4(46 + rubyIncrement, 3.5f, 0), gef::Vector4(2.0f, 2.0f, 2.0f), gef::Vector4(-1.5707f, 0, 0), false);
+		ruby->initRuby(stateMachine->getPhysicsWorld(), xSize, ySize);
 
-	if (scene_assets_)
-	{
-		ruby->set_mesh(rubyMesh);
-	}
-	else
-	{
-		gef::DebugOut("Ruby model failed to load\n");
+		if (scene_assets_)
+		{
+			ruby->set_mesh(rubyMesh);
+		}
+		else
+		{
+			gef::DebugOut("Ruby model failed to load\n");
+		}
+
+		rubies.push_back(ruby);
+
+		rubyIncrement += 10.5f;
 	}
 }
 
@@ -656,11 +661,14 @@ void Level_1_State::updateCamera()
 
 void Level_1_State::updateRubies(float dt)
 {
-	if (!ruby->getIsBodyDestroyed())
+	for (int i = 0; i < rubies.size(); ++i)
 	{
-		ruby->update(dt);
+		if (!rubies[i]->getIsBodyDestroyed())
+		{
+			rubies[i]->update(dt);
+		}
 	}
-	
+
 	hudRuby->setPosition(gef::Vector4(player->getPosition()->x() + rubyStartPosOffsetX, startYPos, 0));
 	hudRuby->setRotation(gef::Vector4(-1.5707f, rotation, 0));
 	hudRuby->update(dt);
@@ -718,6 +726,19 @@ void Level_1_State::renderPlatforms()
 	for (int i = 0; i < highPlatforms.size(); ++i)
 	{
 		highPlatforms[i]->render(stateMachine->get3DRenderer());
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Level_1_State::renderRubies()
+{
+	for (int i = 0; i < rubies.size(); ++i)
+	{
+		if (rubies[i]->getIsAlive())
+		{
+			rubies[i]->render(stateMachine->get3DRenderer());
+		}
 	}
 }
 

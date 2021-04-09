@@ -70,7 +70,7 @@ public:
 	bool isOnGround();
 	bool getIsFacingLeft();
 	bool getIsFacingRight();
-	bool getRubiesCollected();
+	int getRubiesCollected();
 	void setRubiesCollected(int amount);
 	
 private:
