@@ -96,6 +96,7 @@ void Game::CleanUp()
 
 void Game::handleInput(float dt)
 {
+	// This sets of the chain of handling ALL input throughout the states before ANY updating is done.
 	stateMachine->handleInput(dt);
 }
 
@@ -108,19 +109,22 @@ bool Game::Update(float frame_time)
 
 	fps_ = 1.0f / frame_time;
 
+	// Once all the handling of input is done, update stuff.
 	im->Update();
-
 	quitGame = stateMachine->update(frame_time);
 
 	// Update physics world
 	float timeStep = 1.0f / 60.0f;
 	world_->Step(timeStep, velocityIterations, positionIterations);
 
+	// If quitGame ever returns true this then returns false back to the main game while loop
+	// and thus exits the loop and performs the final clean up.
 	if (quitGame)
 	{
 		return false;
 	}
 
+	// Ohterwise keep running the main game loop.
 	return true;
 }
 

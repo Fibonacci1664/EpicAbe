@@ -30,6 +30,10 @@ GameOver::GameOver(StateMachine* sm)
 	stateMachine = sm;
 	stateTimer = 0;
 	stateGraphic = nullptr;
+	audioManager = nullptr;
+	gameOverMusic = 0;
+	gameOverMusicVolinfo = nullptr;
+	musicVolume = 0;
 }
 
 GameOver::~GameOver()
@@ -47,7 +51,7 @@ void GameOver::onEnter()
 	stateTimer = 0.0f;
 
 	/*
-	 * Check is button icon nullptr, if it is then load texture,
+	 * Check if button icon is nullptr, if it is then load texture,
 	 * if not then it's obv already been done, so don't do it again.
 	 */
 	if (stateGraphic == nullptr)
@@ -55,6 +59,7 @@ void GameOver::onEnter()
 		initStateGraphic(stateMachine->getPlatform());
 	}
 
+	// Same for audioManager.
 	if (audioManager == nullptr)
 	{
 		initStateAudio();

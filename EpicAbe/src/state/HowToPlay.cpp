@@ -43,7 +43,7 @@ HowToPlay::~HowToPlay()
 void HowToPlay::onEnter()
 {
 	/*
-	 * Check is button icon nullptr, if it is then load texture,
+	 * Check if button icon is nullptr, if it is then load texture,
 	 * if not then it's obv already been done, so don't do it again.
 	 */
 	if (stateGraphic == nullptr)
@@ -79,9 +79,6 @@ bool HowToPlay::update(float dt)
 	}
 
 	return false;
-
-	// THIS WILL BE WEHRE COULD ALSO RETURN FALSE WHICH WILL QUIT THE GAME
-	// SHOULD THE USE CHOOSE TO QUIT GAME FOLLOWING THE ON SCREEN PROMPTS.
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

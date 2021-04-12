@@ -45,11 +45,14 @@ Ruby::~Ruby()
 // FUNCTIONS
 void Ruby::update(float dt)
 {
+	// If the ruby is NOT a HUD item then bounce the model.
 	if (!isHUDRuby)
 	{
 		move(dt);
 	}
 
+	// If the ruby has been collected then 'alive' will be false and so the
+	// Physics body should also be destroyed.
 	if (!alive)
 	{
 		destroyBody();

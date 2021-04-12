@@ -74,6 +74,8 @@ bool LevelComplete::update(float dt)
 {
 	stateTimer += dt;
 
+	// After 5 seconds return true, this will in turn pass back false to the main game
+	// while loop and thus exit the game.
 	if (stateTimer >= 5.0f)
 	{
 		return true;

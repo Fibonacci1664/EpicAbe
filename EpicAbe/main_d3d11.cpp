@@ -32,9 +32,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 	/* initialize random seed: */
 	srand(time(NULL));
 
-	// initialisation
+	// Initialisation.
 	gef::PlatformD3D11 platform(hInstance, 1440, 810, false, true);
 
+	// Create the game.
 	Game epicAbe(platform);
 	epicAbe.Run();
 

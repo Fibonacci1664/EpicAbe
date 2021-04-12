@@ -59,7 +59,7 @@ Level_1_State::Level_1_State(StateMachine* sm)
 	totalTimeElapsed = 0;
 	isPaused = false;
 	quitGame = false;
-	isDebug = true;
+	isDebug = false;
 	rubyStartPosOffsetX = 0;
 	heartStartPosOffsetX = 0;
 	startYPos = 7.0f;
@@ -452,7 +452,7 @@ void Level_1_State::initMedEnvPlatforms(gef::Mesh* smlPlatMesh, float sizeX, flo
 {
 	float medPlatformIncrement = 0;
 
-	// Init low platforms
+	// Init med platforms
 	for (int i = 0; i < 5; ++i)
 	{
 		platform = new EnvPlatform(gef::Vector4(42 + medPlatformIncrement, 2.15f, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
@@ -479,7 +479,7 @@ void Level_1_State::initHighEnvPlatforms(gef::Mesh* smlPlatMesh, float sizeX, fl
 {
 	float highPlatformIncrement = 0;
 
-	// Init low platforms
+	// Init high platforms
 	for (int i = 0; i < 5; ++i)
 	{
 		platform = new EnvPlatform(gef::Vector4(46 + highPlatformIncrement, 3, 0), gef::Vector4(1.0f, 1.0f, 1.0f), gef::Vector4(0, 3.1415, 0));
@@ -772,6 +772,7 @@ void Level_1_State::DrawHUD()
 	stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(1250.0f, 30.0f, -0.9f), 1.0f, 0xff000000, gef::TJ_LEFT, "COLLECTED: %i", player->getRubiesCollected());
 	stateMachine->getFont()->RenderText(stateMachine->getSpriteRenderer(), gef::Vector4(90.0f, 30.0f, -0.9f), 1.0f, 0xff000000, gef::TJ_LEFT, "LIVES: %i", player->getLives());
 
+	// Switch isDebug ON/OFF in the CONSTRUCTOR.
 	if (isDebug)
 	{
 		if (stateMachine->getFont())

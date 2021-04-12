@@ -444,12 +444,9 @@ void Player::checkSticks(float dt)
 			{
 				move('r', leftStickX, dt);
 			}
-			else
+			else if (!isJumping)
 			{
-				if (!isJumping)
-				{
-					animationPlayer.set_clip(idleAnimation);
-				}
+				animationPlayer.set_clip(idleAnimation);
 			}
 		}
 	}
@@ -486,6 +483,7 @@ void Player::move(char direction, float scale, float dt)
 		break;
 	}
 
+	// We can only get to here if we have moved the sticks either left or right.
 	if (onGround)
 	{
 		animationPlayer.set_clip(runAnimation);
@@ -519,12 +517,18 @@ void Player::buildTransform()
 
 void Player::jump(float dt)
 {
+	// This function may have been called during the handle input cycle if the player pressed the x button.
+	// Set the necessary bools that will be checked during the update cycle.
 	isJumping = true;
 	onGround = false;
 
 	audioManager->PlaySample(jumpSFX, false);
 
+	// Change what animation is playing.
 	animationPlayer.set_clip(jumpAnimation);
+
+	// Set the animation back to the start, just incase it wasn't fully finished playing all the
+	// frame last time.
 	animationPlayer.set_anim_time(animationPlayer.clip()->start_time());
 
 	// If we pressed the jump button, we must be in the air, i.e. we're NOT on the ground.
@@ -571,6 +575,7 @@ void Player::initAudio(gef::AudioManager* audioMan, gef::Platform& thePlatform)
 {
 	audioManager = audioMan;
 
+	// Init ALL the audio for the player.
 	collectItemSFX = audioManager->LoadSample("../media/itemCollect.wav", thePlatform);
 	jumpSFX = audioManager->LoadSample("../media/jump.wav", thePlatform);
 	hurtSFX = audioManager->LoadSample("../media/hurt.wav", thePlatform);
@@ -601,11 +606,12 @@ void Player::loadAsset(gef::Platform& platform, const char* assetFilePath)
 		playerSkinnedMesh->set_mesh(mesh_);
 	}
 
-	// anims
+	// Init ALL the animations for the player.
 	idleAnimation = LoadAnimation("@idle.scn", "");
 	runAnimation = LoadAnimation("@run.scn", "");
 	jumpAnimation = LoadAnimation("@jump.scn", "");
 
+	// Set the initial default animation (idle).
 	if (idleAnimation)
 	{
 		animationPlayer.set_clip(idleAnimation);

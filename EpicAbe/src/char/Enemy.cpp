@@ -90,11 +90,14 @@ void Enemy::move(float dt)
 {
 	float force = 2.0f;
 
+	// If the enemy position ever becomes greater or lesser than 1 unit away from its starting position
+	// Then negate the force. This causes the enemy to move back and forth in an area.
 	if (enemyBody->GetPosition().x > (m_startPos.x() + 1) || enemyBody->GetPosition().x < (m_startPos.x() - 1))
 	{
 		force = -force;
 
-		// After we have started applying an opposite force and once vel == 0, flip model
+		// After we have started applying an opposite force and once vel == 0, flip the model
+		// ready to moce the opposite direction.
 		if (enemyBody->GetLinearVelocity().x < 0.05)
 		{
 			setRotation(gef::Vector4(0, 0, 3.1415 * 1.5f));
@@ -108,6 +111,7 @@ void Enemy::move(float dt)
 		}
 	}
 
+	// Where we are applying the force and along what axis.
 	enemyBody->ApplyForceToCenter(b2Vec2(force * speed * dt, 0), true);
 }
 

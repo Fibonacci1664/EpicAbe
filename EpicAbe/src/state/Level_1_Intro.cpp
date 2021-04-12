@@ -45,7 +45,7 @@ void Level_1_Intro::onEnter()
 	stateTimer = 0.0f;
 
 	/*
-	 * Check is button icon nullptr, if it is then load texture,
+	 * Check if button icon is nullptr, if it is then load texture,
 	 * if not then it's obv already been done, so don't do it again.
 	 */
 	if (stateGraphic == nullptr)

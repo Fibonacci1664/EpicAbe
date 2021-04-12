@@ -48,11 +48,14 @@ Heart::~Heart()
 // FUNCTIONS
 void Heart::update(float dt)
 {
+	// If the heart is NOT a HUD item then bounce the model.
 	if (!isHUDHeart)
 	{
 		move(dt);
 	}
 
+	// If the heart has been collected then 'alive' will be false and so the
+	// Physics body should also be destroyed.
 	if (!alive)
 	{
 		destroyBody();
