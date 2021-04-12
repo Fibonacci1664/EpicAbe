@@ -1,3 +1,15 @@
+/*
+ * This class controls
+ *		- Creating an image for the level 1 intro screen.
+ *		- Timing how long the level 1 intro graphic displays for.
+ *
+ * Original @author D. Green.
+ *
+ * © D. Green. 2021.
+ */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 #include "StateMachine.h"
 #include "Level_1_Intro.h"

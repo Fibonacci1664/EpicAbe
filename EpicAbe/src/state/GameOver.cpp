@@ -1,3 +1,15 @@
+/*
+ * This class controls
+ *		- Creating an image for the level 1 intro screen.
+ *		- Initialising and playing game over music.
+ *
+ * Original @author D. Green.
+ *
+ * © D. Green. 2021.
+ */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 #include "StateMachine.h"
 #include "GameOver.h"

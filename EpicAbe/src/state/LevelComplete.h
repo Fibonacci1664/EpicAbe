@@ -1,3 +1,15 @@
+/*
+ * This class controls
+ *		- Creating an image for the level complete screen.
+ *		- Timing how long the level complete graphic displays for.
+ *
+ * Original @author D. Green.
+ *
+ * © D. Green. 2021.
+ */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 #include "GameState.h"
 

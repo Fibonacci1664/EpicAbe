@@ -1,3 +1,15 @@
+/*
+ * This is the parent class for all game objects.
+ *
+ * Original @author Abertay University
+ *
+ * Updated by @author D. Green.
+ *
+ * © D. Green. 2021.
+ */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #ifndef _GAME_OBJECT_H
 #define _GAME_OBJECT_H
 

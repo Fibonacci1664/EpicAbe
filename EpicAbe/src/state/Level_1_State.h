@@ -1,3 +1,25 @@
+/*
+ * This class controls all things related to the Level, including but not limited to:
+ *		- Handling level debug information.
+ *		- Creating a player.
+ *		- Creating the environment.
+ *		- Creating the UI.
+ *		- Creating the level objects (Enemy & Collectables).
+ *		- Checking player death.
+ *		- All model loading.
+ *		- All Animatoin loading.
+ *		- Checking level compelte.
+ *		- Handling input for accessing pause menu.
+ *		- Updating and rendering all level objects.
+ *		- Changing state based on various outcomes.
+ *
+ * Original @author D. Green.
+ *
+ * © D. Green. 2021.
+ */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 #include "GameState.h"
 

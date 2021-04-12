@@ -1,3 +1,20 @@
+/*
+ * This class controls
+ *		- Initialising a physics body for in game collectable rubies.
+ *		- Updating ruby objects based on whether they are in game collectable
+ *	      or HUD rubies.
+ *		- Destroying itself and the physics body once collected.
+ *		- Logic for controlling the animation of rubies.
+ *			- In game collectable rubies bounce.
+ *			- HUD rubies rotate.
+ *
+ * Original @author D. Green.
+ *
+ * © D. Green. 2021.
+ */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #include "Ruby.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

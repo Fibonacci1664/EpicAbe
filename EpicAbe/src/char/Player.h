@@ -1,3 +1,21 @@
+/*
+ * This class controls all aspects of the player including:
+ *		- Initilaising Physics body.
+ *		- Initialising the model and animations.
+ *		- Handling input.
+ *		- Item Collection.
+ *		- Health.
+ *		- Collisions with environment, Collectable, or Enemy.
+ *  	- Rendering the mesh.
+ *		- Updating the transform.
+ *
+ * Original @author D. Green.
+ *
+ * © D. Green. 2021.
+ */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 #include "../object/game_object.h"
 #include "../anim/motion_clip_player.h"

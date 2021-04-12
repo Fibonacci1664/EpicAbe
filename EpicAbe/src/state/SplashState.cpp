@@ -1,3 +1,15 @@
+/*
+ * This class controls
+ *		- Creating an image for the splash screen.
+ *		- Timing how long the spalsh screen displays for.
+ *
+ * Original @author D. Green.
+ *
+ * © D. Green. 2021.
+ */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 #include "../texture/load_texture.h"
 #include "StateMachine.h"

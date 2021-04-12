@@ -1,3 +1,16 @@
+/*
+ * This class controls
+ *		- Creating an image for the main menu screen.
+ *		- Logic for button input.
+ *		- Changing state based on button input.
+ *
+ * Original @author D. Green.
+ *
+ * © D. Green. 2021.
+ */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 #include "StateMachine.h"
 #include "MenuState.h"

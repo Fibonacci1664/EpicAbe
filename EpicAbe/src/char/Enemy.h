@@ -1,3 +1,17 @@
+/*
+ * This class controls all aspects of the enemy including:
+ *		- Initilaising Physics body.
+ *		- Logic for moving the model.
+ *		- Rendering the mesh.
+ *		- Updating the transform.
+ *
+ * Original @author D. Green.
+ *
+ * © D. Green. 2021.
+ */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 #include "../object/game_object.h"
 

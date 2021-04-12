@@ -1,3 +1,23 @@
+/*
+ * This class controls
+ *		- Initialising a physics body for in game collectable hearts.
+ *		- Updating heart objects based on whether they are in game collectable
+ *	      or HUD hearts.
+ *		- Destroying itself and the physics body once collected.
+ *		- Logic for controlling the animation of hearts.
+ *			- In game collectable hearts bounce.
+ *			- HUD hearts rotate.
+ *		- * NOTE *
+ *		- IN GAME COLLECTABLE HEARTS NOT YET IMPLEMENTED BUT ALL THE ABOVE STILL
+ *		- EXISTS FOR POSSIBLE FUTURE DEVELOPMENT.
+ *
+ * Original @author D. Green.
+ *
+ * © D. Green. 2021.
+ */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #include "Heart.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

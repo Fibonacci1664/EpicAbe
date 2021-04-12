@@ -1,3 +1,16 @@
+/*
+ * This class controls:
+ *		- Rendering the mesh of the model.
+ *		- Initialising the physics body of the object.
+ *		- Building the transform of the object.
+ *
+ * Original @author D. Green.
+ *
+ * © D. Green. 2021.
+ */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 #include "../object/game_object.h"
 

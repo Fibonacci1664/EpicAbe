@@ -1,3 +1,16 @@
+/*
+ * This class controls:
+ *		- Rendering the mesh of the model.
+ *		- Initialising the physics body of the object.
+ *		- Building the trasnform of the object.
+ *
+ * Updated by @author D. Green.
+ *
+ * © D. Green. 2021.
+ */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #include "LargePillar.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,21 @@
+/*
+ * This class controls
+ *		- Initialising:
+ *			- Fonts
+ *			- The Physics World
+ *			- Input
+ *			- Audio
+ *			- The Games State Machine
+ *
+ * Original @author Abertay University
+ *
+ * Updated by @author D. Green.
+ *
+ * © D. Green. 2021.
+ */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 #include "Game.h"
 #include "src/char/Player.h"

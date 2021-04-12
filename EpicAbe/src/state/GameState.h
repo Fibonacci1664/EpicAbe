@@ -1,3 +1,13 @@
+/*
+ * This is the abstract interface for all the child game states.
+ *
+ * Original @author D. Green.
+ *
+ * © D. Green. 2021.
+ */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 #include <system/platform.h>
 

@@ -1,3 +1,15 @@
+/*
+ * This class controls:
+ *		- Rendering the mesh of the model.
+ *		- Building the trasnform of the object.
+ *
+ * Updated by @author D. Green.
+ *
+ * © D. Green. 2021.
+ */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 #include "../object/game_object.h"
 

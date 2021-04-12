@@ -1,3 +1,21 @@
+/*
+ * This class controls all aspects of the player including:
+ *		- Initilaising Physics body.
+ *		- Initialising the model and animations.
+ *		- Handling input.
+ *		- Item Collection.
+ *		- Health.
+ *		- Collisions with environment, Collectable, or Enemy.
+ *  	- Rendering the mesh.
+ *		- Updating the transform.
+ *
+ * Original @author D. Green.
+ *
+ * © D. Green. 2021.
+ */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #include "Player.h"
 #include "../collectable/Ruby.h"
 

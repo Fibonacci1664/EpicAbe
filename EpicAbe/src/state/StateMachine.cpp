@@ -1,3 +1,20 @@
+/*
+ * This class knows about everything the Game class knows about, namely:
+ *		- Platfrom, Input, Audio etc.
+ * 
+ * This is so it can pass these by pointer to the respective states
+ * as and when the states need to use them.
+ * 
+ * This class also initialises all the game states and stores them in a map
+ * using the a string as the key.
+ *
+ * Original @author D. Green.
+ *
+ * © D. Green. 2021.
+ */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma once
 #include "StateMachine.h"
 #include "SplashState.h"

@@ -1,3 +1,21 @@
+/*
+ * This class controls
+ *		- Initialising:
+ *			- Fonts
+ *			- The Physics World
+ *			- Input
+ *			- Audio
+ *			- The Games State Machine
+ *
+ * Original @author Abertay University
+ * 
+ * Updated by @author D. Green.
+ *
+ * © D. Green. 2021.
+ */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
 #ifndef _GAME_APP_H
 #define _GAME_APP_H
 
